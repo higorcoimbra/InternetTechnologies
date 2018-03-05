@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>aula.01.01 - CANVAS semidinâmico + SVG estático</title>
+		<style>
+			#tela1, #vect1{border:1px dotted #000;}
+		</style>
+		<script>
+			var graf1;
+			function inic(){
+				graf1 = document.getElementById("tela1").getContext("2d");
+				//retângulo
+				rectTela(graf1, 200, 200, 200, 200, "#f00", 5, "#ff0", 1.0);
+				//círculo
+				circTela(graf1, 200, 200, 100, "#00f", 3, "#f80", 0.7);
+				//polígono
+				poligTela(graf1, [{x:200, y:200}, {x:240, y:240}, {x:215, y:240}, {x:215, y:350}, {x:185, y:350}, {x:185, y:240}, {x:160, y:240}], "#000", 7, "#0ff", 0.7);
+				//polilinha
+				polilTela(graf1, [{x:98, y:150}, {x:132, y:184}, {x:166, y:150}, {x:200, y:184}, {x:234, y:150}, {x:268, y:184}, {x:302, y:150}, {x:336, y:184}, {x:370, y:150}, {x:404, y:184}], "#080", 10, 0.7);
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), um retângulo ortogonal, dados: coordenadas do vértice superior esquerdo, largura, altura, cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function rectTela(graf, x, y, larg, alt, corL, espL, corF, opac){
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.rect(x, y, larg, alt); graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), um círculo, dados: coordenadas do vértice do centro, raio, cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function circTela(graf, x, y, raio, corL, espL, corF, opac){
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.arc(x, y, raio, 0, 2*Math.PI);
+				graf.closePath(); 
+				graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), um polígono (linha poligonal fechada), dados: lista de vértices (array de objetos {x,y}), cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function poligTela(graf, verts, corL, espL, corF, opac){
+				var i, nVerts = verts.length;
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.moveTo(verts[0].x, verts[0].y);
+				for(i = 1; i < nVerts; i++) graf.lineTo(verts[i].x, verts[i].y);
+				graf.closePath(); 
+				graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), uma polilinha (linha poligonal aberta), dados: lista de vértices (array de objetos {x,y}), cor do contorno, espessura do contorno e grau de opacidade geral
+			function polilTela(graf, verts, corL, espL, opac){
+				var i, nVerts = verts.length;
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.moveTo(verts[0].x, verts[0].y);
+				for(i = 1; i < nVerts; i++) graf.lineTo(verts[i].x, verts[i].y);
+				graf.stroke();
+			}
+		</script>
+	</head>
+	<body>
+		<canvas id="tela1" width="500" height="500"></canvas>
+		<svg id="vect1" width="500" height="500">
+
+			<rect x="200" y="200" width="200" height="200" stroke="#f00" stroke-width="5" stroke-opacity="1.0" fill="#ff0" fill-opacity="1.0" />
+			
+			<circle cx="200" cy="200" r="100" stroke="#00f" stroke-width="3" stroke-opacity="0.7" fill="#f80" fill-opacity="0.7" />
+
+			<polygon points="200,200 240,240 215,240 215,350 185,350 185,240 160,240" stroke="#000" stroke-width="7" stroke-opacity="0.7" fill="#0ff" fill-opacity="0.7" />
+
+			<polyline points="98,150 132,184 166,150 200,184 234,150 268,184 302,150 336,184 370,150 404,184}" stroke="#080" stroke-width="10" stroke-opacity="0.7" fill="none" fill-opacity="0.7" />
+
+		</svg>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>
+
+<!-- //strokeStyle = cor da linha 
+//lineWidth = espessura da linha
+//fillStyle = cor de fundo;
+//globalAlpha = opacidade;
+//todas as funções do retângulo já definem o percurso (não precisam de beginPath)
+//descobrir o que é fill e stroke.-->

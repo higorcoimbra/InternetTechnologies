@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="UTF-8">
+		<title>Exerc.01.05</title>
+		<script>	
+			function inic(){
+				graf1 = document.getElementById("tela").getContext("2d");
+				pontos = geraArrayPts(500, {xMin: 100, xMax: 300, yMin: 100, yMax: 300});
+				mostraPts(pontos, graf1, '#ff0', 5);
+			}
+
+			function geraArrayPts(nPts, domXY){
+				var i, ptx, pty, arrayPts = [];
+				for(i = 0; i < nPts; i++){
+					ptx = domXY.xMin + Math.random()*(domXY.xMax-domXY.xMin);
+					pty = domXY.yMin + Math.random()*(domXY.yMax-domXY.yMin);
+					arrayPts.push({x: ptx, y: pty});
+				}
+				return arrayPts;
+			}
+
+			function mostraPt(pt, graf, cor, diam){
+				graf.fillStyle = cor;
+				graf.beginPath();
+				graf.arc(pt.x,pt.y,diam/2,0,2*Math.PI);
+				graf.closePath();
+				graf.fill();
+			}
+
+			function mostraPts(pts, graf, cor, diam){
+				var i, nPts = pts.length;
+				for(i = 0; i < nPts;i++) mostraPt(pts[i], graf, cor, diam);
+			}
+		</script>
+	</head>
+<body>
+	<canvas id="tela" width="800" height="600"></canvas>
+	<script>
+		inic();
+	</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="UTF-8">
+		<title>Exerc.01.04</title>
+		<script>
+			var a = {x: 40, y: 100}, b = {x: 340, y: 500}, c = {x: 200, y: 200};	
+			function inic(){
+				document.write('distância a-b: ' + dispPts(a, b).toFixed(2) + '<br />');	
+				document.write('distância b-c: ' + dispPts(b, c).toFixed(2) + '<br />');	
+				document.write('distância c-a: ' + dispPts(c, a).toFixed(2) + '<br />');	
+			}
+
+			function dispPts(pt1, pt2){
+				return Math.sqrt(Math.pow((pt2.x-pt1.x),2)+Math.pow((pt2.y-pt1.y),2));
+			}
+		</script>
+</head>
+<body>
+	<script>
+		inic();
+	</script>
+</body>
+</html>

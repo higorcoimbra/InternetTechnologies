@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="UTF-8">
+		<title>Exerc.01.02</title>
+		<script>
+			var idades=[12, 32, 8, 10, 28, 35, 24, 5, 18, 21, 16, 9, 14, 20, 25, 13, 30];
+			var pesos=[48, 79, 33, 29, 80, 88, 58, 22, 60, 71, 55, 38, 46, 51, 63, 57, 91];
+			function inic(){
+				var limsIdades = limsArray(idades);
+				var limsPesos = limsArray(pesos);
+				document.write('menor idade: '+limsIdades.min);
+				document.write('; maior idade: '+limsIdades.max);
+				document.write('<br /> menor peso: '+limsPesos.min);
+				document.write('; maior idade: '+limsPesos.max);
+			}
+
+			function limsArray(arrayNums){
+				var i, vMin=vMax=arrayNums[0], nVals=arrayNums.length;
+				for(i=1; i < nVals;i++){
+					if(arrayNums[i] < vMin){
+						vMin = arrayNums[i];
+					}
+					if(arrayNums[i] > vMax){
+						vMax = arrayNums[i];
+					}
+				}
+				return {min:vMin, max:vMax};
+			}
+		</script>
+</head>
+<body>
+	<script>
+		inic();
+	</script>
+</body>
+</html>

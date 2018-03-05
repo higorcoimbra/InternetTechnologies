@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="UTF-8">
+		<title>Exerc.01.03</title>
+		<script>
+			var idades=[12, 32, 8, 10, 28, 35, 24, 5, 18, 21, 16, 9, 14, 20, 25, 13, 30];
+			var pesos=[48, 79, 33, 29, 80, 88, 58, 22, 60, 71, 55, 38, 46, 51, 63, 57, 91];
+			function inic(){
+				var dispIdades = dispValsArray(idades);
+				var dispPesos = dispValsArray(pesos);
+				document.write('<b>Idades:</b><br />');
+				document.write('Numero de observações: ' + dispIdades.qtd + ' ');
+				//.toFixed(n) -> formata números, retorna string
+				document.write('Média: ' + dispIdades.media.toFixed(2) + ' ');
+				document.write('Desvio Padrão: ' + dispIdades.desvPadr.toFixed(2));
+				//<hr> -> linha visível
+				document.write('<hr><b>Pesos:</b><br />');
+				document.write('Numero de observações: ' + dispPesos.qtd + ' ');
+				document.write('Média: ' + dispPesos.media.toFixed(2) + ' ');
+				document.write('Desvio Padrão: ' + dispPesos.desvPadr.toFixed(2));
+			}
+
+			function dispValsArray(arrayNums){
+				var i, vQtd = arrayNums.length, vMedia, vDP, soma;
+				//calcula a média
+				soma = 0
+				for(i = 0; i < vQtd;i++) soma += arrayNums[i];
+				vMedia = soma/vQtd;
+				//calcula o desvio padrão
+				soma = 0;
+				for(i = 0;i < vQtd;i++) soma += Math.pow(arrayNums[i]-vMedia, 2);
+				vDP = Math.sqrt(soma/vQtd);
+				return {qtd: vQtd, media: vMedia, desvPadr: vDP};
+			}
+		</script>
+	</head>
+<body>
+	<script>
+		inic();
+	</script>
+</body>
+</html>

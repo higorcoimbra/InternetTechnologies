@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.01.03 - Introd. DOM</title>
+		<style>
+		</style>
+		<script>
+			//referências, conteúdos e estilos para 4 objetos Web: "nota" (DIV), "imag" (IMG), "cab" (H3), "prg" (P).
+			//dois conjuntos, um para os objetos e um para os dados de estilo.
+			var interf = {};
+			var dados = {
+				notaStyle:"width:300px; border:1px solid #000; padding:10px;",
+				imagSrc:"../Recursos/img04/FigLx1.jpg",
+				imagWidth:300,
+				cabText:"Portugal, Naçao Moderna",
+				cabStyle:"font:bold 16px arial;",
+				prgText:"Portugal (de nome oficial República Portuguesa) fica situado no sudoeste da Europa, na zona Ocidental da Península Ibérica e é o país mais ocidental da Europa, delimitado a Norte e a Leste pelo reino de Espanha e a Sul e Oeste pelo Oceano Atlântico. O território de Portugal compreende ainda as Regiões Autónomas dos Açores e da Madeira, situados no hemisfério norte do Oceano Atlântico. Durante os séculos XV e XVI, Portugal era a maior potência económica, social e cultural do mundo, com um império que estendia-se em várias colónias pelo mundo. É hoje um país desenvolvido, economicamente próspero, social e politicamente estável e humanamente desenvolvido. Membro da União Europeia desde 1986, é um dos países fundadores da Zona Euro, NATO (ou OTAN) e da OCDE.",
+				prgStyle:"font:11px/1.5 verdana; text-align: justify;"
+			};
+			//cria, configura e mostra os elementos no interface
+			function inic(){
+				//cria
+				//se não existir o atributo ele vai criá-lo
+				interf.nota = document.createElement("div");
+				interf.imag = document.createElement("img");
+				interf.cab = document.createElement("h3");
+				interf.prg = document.createElement("p");
+				//configura
+				interf.nota.style = dados.notaStyle;
+				interf.imag.src = dados.imagSrc;
+				interf.imag.width = dados.imagWidth;
+				interf.cab.appendChild(document.createTextNode(dados.cabText));
+				interf.cab.style = dados.cabStyle;
+				interf.prg.appendChild(document.createTextNode(dados.prgText));
+				interf.prg.style = dados.prgStyle;
+				//mostra
+				document.body.appendChild(interf.nota);
+				interf.nota.appendChild(interf.imag);
+				interf.nota.appendChild(interf.cab);
+				interf.nota.appendChild(interf.prg);
+			}
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

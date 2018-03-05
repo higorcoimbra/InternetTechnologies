@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>aula.02.01 - CANVAS + SVG dinâmicos</title>
+		<style>
+		</style>
+		<script>
+			var SVGNS = "http://www.w3.org/2000/svg"
+			var tela1, graf1, vect1, rect1;
+			function inic(){
+				//criação e afixação de uma tela e criação do respetivo contexto gráfico
+				tela1 = novaTela(500, 500, "border:1px dotted #000;");
+				document.body.appendChild(tela1);
+				graf1 = tela1.getContext("2d");
+				//desenha gráficos na tela
+				//retângulo
+				rectTela(graf1, 200, 200, 200, 200, "#f00", 5, "#ff0", 1.0);
+				//círculo
+				circTela(graf1, 200, 200, 100, "#00f", 3, "#f80", 0.7);
+				//polígono
+				poligTela(graf1, [{x:200, y:200}, {x:240, y:240}, {x:215, y:240}, {x:215, y:350}, {x:185, y:350}, {x:185, y:240}, {x:160, y:240}], "#000", 7, "#0ff", 0.7);
+				//polilinha
+				polilTela(graf1, [{x:98, y:150}, {x:132, y:184}, {x:166, y:150}, {x:200, y:184}, {x:234, y:150}, {x:268, y:184}, {x:302, y:150}, {x:336, y:184}, {x:370, y:150}, {x:404, y:184}], "#080", 10, 0.7);
+				//criação e afixação de uma janela vetorial
+				vect1 = novaVect(500, 500, "border:1px dotted #000;");
+				document.body.appendChild(vect1);
+				//mostra objetos gráficos na respetiva janela vetorial
+				rectVect(vect1, 200, 200, 200, 200, "#f00", 5, "#ff0", 1.0);
+				circVect(vect1, 200, 200, 100, "#00f", 3, "#f80", 0.7);
+				poligVect(vect1, [{x:200, y:200}, {x:240, y:240}, {x:215, y:240}, {x:215, y:350}, {x:185, y:350}, {x:185, y:240}, {x:160, y:240}], "#000", 7, "#0ff", 0.7);
+				polilVect(vect1, [{x:98, y:150}, {x:132, y:184}, {x:166, y:150}, {x:200, y:184}, {x:234, y:150}, {x:268, y:184}, {x:302, y:150}, {x:336, y:184}, {x:370, y:150}, {x:404, y:184}], "#080", 10, 0.7);
+			}
+			//*********************** CANVAS *******************************
+			//gera uma referência para um CANVAS, dadas as suas dimensões e o seu estilo (string com código de "style")
+			function novaTela(larg, alt, estilo){
+				var tela = document.createElement("canvas");
+				tela.width = larg; tela.height = alt;
+				tela.style = estilo;
+				return tela;
+ 			}
+			//desenha, no contexto gráfico indicado (CANVAS), um retângulo ortogonal, dados: coordenadas do vértice superior esquerdo, largura, altura, cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function rectTela(graf, x, y, larg, alt, corL, espL, corF, opac){
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.rect(x, y, larg, alt); graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), um círculo, dados: coordenadas do vértice do centro, raio, cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function circTela(graf, x, y, raio, corL, espL, corF, opac){
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.arc(x, y, raio, 0, 2*Math.PI);
+				graf.closePath(); 
+				graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), um polígono (linha poligonal fechada), dados: lista de vértices (array de objetos {x,y}), cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function poligTela(graf, verts, corL, espL, corF, opac){
+				var i, nVerts = verts.length;
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.moveTo(verts[0].x, verts[0].y);
+				for(i = 1; i < nVerts; i++) graf.lineTo(verts[i].x, verts[i].y);
+				graf.closePath(); 
+				graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), uma polilinha (linha poligonal aberta), dados: lista de vértices (array de objetos {x,y}), cor do contorno, espessura do contorno e grau de opacidade geral
+			function polilTela(graf, verts, corL, espL, opac){
+				var i, nVerts = verts.length;
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.moveTo(verts[0].x, verts[0].y);
+				for(i = 1; i < nVerts; i++) graf.lineTo(verts[i].x, verts[i].y);
+				graf.stroke();
+			}
+ 			//*********************** SVG *******************************
+ 			//gera uma referência para um SVG, dadas as suas dimensões e o seu estilo (string com código de "style")
+			function novaVect(larg, alt, estilo){
+				var vect = document.createElementNS(SVGNS,"svg");
+				vect.setAttribute("width", larg); 
+				vect.setAttribute("height", alt); 
+				vect.style = estilo;
+				return vect;
+ 			}
+ 			//mostra, na javenal vetorial indicada (SVG), um retângulo ortogonal, dados: coordenadas do vértice superior esquerdo, largura, altura, cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function rectVect(vect, x, y, larg, alt, corL, espL, corF, opac){
+				var obj = document.createElementNS(SVGNS, "rect");
+				obj.setAttribute("x", x);
+				obj.setAttribute("y", y);
+				obj.setAttribute("width", larg);
+				obj.setAttribute("height", alt);
+				obj.setAttribute("stroke", corL);
+				obj.setAttribute("stroke-width", espL);
+				obj.setAttribute("stroke-opacity", opac);
+				obj.setAttribute("fill", corF);
+				obj.setAttribute("fill-opacity", opac);
+				vect.appendChild(obj);
+			}
+			//mostra, na javenal vetorial indicada (SVG), um círculo, dados: coordenadas do centro, raio, cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function circVect(vect, x, y, raio, corL, espL, corF, opac){
+				var obj = document.createElementNS(SVGNS, "circle");
+				obj.setAttribute("cx", x);
+				obj.setAttribute("cy", y);
+				obj.setAttribute("r", raio);
+				obj.setAttribute("stroke", corL);
+				obj.setAttribute("stroke-width", espL);
+				obj.setAttribute("stroke-opacity", opac);
+				obj.setAttribute("fill", corF);
+				obj.setAttribute("fill-opacity", opac);
+				vect.appendChild(obj);
+			}
+			//mostra, na javenal vetorial indicada (SVG), um polígono (linha poligonal fechada), dados: lista de vértices (array de objetos {x,y}), cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function poligVect(vect, verts, corL, espL, corF, opac){
+				var i, str = "", nVerts = verts.length;
+				for(i = 0; i < nVerts; i++) str += verts[i].x + "," + verts[i].y + " ";
+				var obj = document.createElementNS(SVGNS, "polygon");
+				obj.setAttribute("points", str);
+				obj.setAttribute("stroke", corL);
+				obj.setAttribute("stroke-width", espL);
+				obj.setAttribute("stroke-opacity", opac);
+				obj.setAttribute("fill", corF);
+				obj.setAttribute("fill-opacity", opac);
+				vect.appendChild(obj);
+			}
+			//mostra, na javenal vetorial indicada (SVG), uma polinha (linha poligonal aberta), dados: lista de vértices (array de objetos {x,y}), cor do contorno, espessura do contorno e grau de opacidade geral
+			function polilVect(vect, verts, corL, espL, opac){
+				var i, str = "", nVerts = verts.length;
+				for(i = 0; i < nVerts; i++) str += verts[i].x + "," + verts[i].y + " ";
+				var obj = document.createElementNS(SVGNS, "polyline");
+				obj.setAttribute("points", str);
+				obj.setAttribute("stroke", corL);
+				obj.setAttribute("stroke-width", espL);
+				obj.setAttribute("stroke-opacity", opac);
+				obj.setAttribute("fill", "none");
+				obj.setAttribute("fill-opacity", opac);
+				vect.appendChild(obj);
+			}
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>
+<!--
+<head>
+		<meta charset="utf-8" />
+		<title>aula.02.01 - CANVAS + SVG dinâmicos</title>
+		<style>
+			#tela1, #vect1{border:1px dotted #000;}
+		</style>
+		<script>
+			var graf1;
+			function inic(){
+				graf1 = document.getElementById("tela1").getContext("2d");
+				//retângulo
+				rectTela(graf1, 200, 200, 200, 200, "#f00", 5, "#ff0", 1.0);
+				//círculo
+				circTela(graf1, 200, 200, 100, "#00f", 3, "#f80", 0.7);
+				//polígono
+				poligTela(graf1, [{x:200, y:200}, {x:240, y:240}, {x:215, y:240}, {x:215, y:350}, {x:185, y:350}, {x:185, y:240}, {x:160, y:240}], "#000", 7, "#0ff", 0.7);
+				//polilinha
+				polilTela(graf1, [{x:98, y:150}, {x:132, y:184}, {x:166, y:150}, {x:200, y:184}, {x:234, y:150}, {x:268, y:184}, {x:302, y:150}, {x:336, y:184}, {x:370, y:150}, {x:404, y:184}], "#080", 10, 0.7);
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), um retângulo ortogonal, dados: coordenadas do vértice superior esquerdo, largura, altura, cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function rectTela(graf, x, y, larg, alt, corL, espL, corF, opac){
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.rect(x, y, larg, alt); graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), um círculo, dados: coordenadas do vértice do centro, raio, cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function circTela(graf, x, y, raio, corL, espL, corF, opac){
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.arc(x, y, raio, 0, 2*Math.PI);
+				graf.closePath(); 
+				graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), um polígono (linha poligonal fechada), dados: lista de vértices (array de objetos {x,y}), cor do contorno, espessura do contorno, cor do fundo e grau de opacidade geral
+			function poligTela(graf, verts, corL, espL, corF, opac){
+				var i, nVerts = verts.length;
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.fillStyle = corF; graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.moveTo(verts[0].x, verts[0].y);
+				for(i = 1; i < nVerts; i++) graf.lineTo(verts[i].x, verts[i].y);
+				graf.closePath(); 
+				graf.fill(); graf.stroke();
+			}
+			//desenha, no contexto gráfico indicado (CANVAS), uma polilinha (linha poligonal aberta), dados: lista de vértices (array de objetos {x,y}), cor do contorno, espessura do contorno e grau de opacidade geral
+			function polilTela(graf, verts, corL, espL, opac){
+				var i, nVerts = verts.length;
+				graf.strokeStyle = corL; graf.lineWidth = espL;
+				graf.globalAlpha = opac;
+				graf.beginPath(); 
+				graf.moveTo(verts[0].x, verts[0].y);
+				for(i = 1; i < nVerts; i++) graf.lineTo(verts[i].x, verts[i].y);
+				graf.stroke();
+			}
+		</script>
+	</head>
+	<body>
+		<canvas id="tela1" width="500" height="500"></canvas>
+		<svg id="vect1" width="500" height="500">
+
+			<rect x="200" y="200" width="200" height="200" stroke="#f00" stroke-width="5" stroke-opacity="1.0" fill="#ff0" fill-opacity="1.0" />
+			
+			<circle cx="200" cy="200" r="100" stroke="#00f" stroke-width="3" stroke-opacity="0.7" fill="#f80" fill-opacity="0.7" />
+
+			<polygon points="200,200 240,240 215,240 215,350 185,350 185,240 160,240" stroke="#000" stroke-width="7" stroke-opacity="0.7" fill="#0ff" fill-opacity="0.7" />
+
+			<polyline points="98,150 132,184 166,150 200,184 234,150 268,184 302,150 336,184 370,150 404,184}" stroke="#080" stroke-width="10" stroke-opacity="0.7" fill="none" fill-opacity="0.7" />
+
+		</svg>
+		<script>
+			inic();
+		</script>
+-->

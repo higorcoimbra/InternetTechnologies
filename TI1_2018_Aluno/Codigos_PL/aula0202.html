@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.02.02 - Introd. Motion</title>
+		<style>
+		</style>
+		<script>
+			var abespa, pi={x:50, y:50}, pf={x:800, y:600}, fs=20, t=5;
+			var pos = {x:pi.x, y:pi.y}, interv;
+			function inic(){
+				abespa = document.getElementById("abespa");
+				abespa.style.position = "absolute";
+				interv = setInterval(saltaAbespa, 50);
+			}
+			//coloca a abespa numa determinada posição
+			function colocaAbespa(x, y){
+				abespa.style.left = x+"px";
+				abespa.style.top = y+"px";	
+			}
+			//executa um salto da abespa de 750/100, 550/100
+			function saltaAbespa(){
+				colocaAbespa(pos.x, pos.y);
+				pos.x += 750/100; pos.y += 550/100;
+				if(pos.x > pf.x) clearInterval(interv);
+			}
+		</script>
+	</head>
+	<body>
+		<img id="abespa" src="../Recursos/img01/abelha.gif" width="40"/>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>
