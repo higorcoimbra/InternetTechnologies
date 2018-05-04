@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula 05.01 - Proj. HiperCarros #1</title>
+		<style>
+			button{cursor: pointer;}
+			.dadoTec{font: bold 13px arial;border:1px solid #048; background-color: #8ff; color: #048;}
+			.etik1{font: bold 13px arial;border:1px solid #048; background-color: #048; color: #8ff; text-align: right;}
+			.fig {cursor: pointer;}
+			#apres1{position: absolute; left: 10px; top: 10px;}
+			#apres2{position: absolute; left: 600px; top: 10px;}
+			#marcaModelo{font:26px verdana;}
+			#refCarro, #prg1, #prg2 {padding: 6px;}
+			#prg1, #prg2{font:15px/1.3 arial; vertical-align: top;}
+			#versao{font:18px verdana;}
+			#zoom{position: absolute; left: 0px; top: 0px;}
+		</style>
+		<script src="../Recursos/HiperCarros/HiperCarrosBD.js"></script>
+		<script src="../Recursos/HiperCarros/HiperCarrosPars.js"></script>
+		<script>
+			var LFIG = 225, PATH = "../Recursos/HiperCarros/";
+			var n=0, interf = {};
+			function inic(){
+				adqInterf();
+				inicInterf();
+			}
+			//adquire as referências para o interface estático
+			function adqInterf() {
+				interf.apres1 = document.getElementById("apres1");
+				interf.apres2 = document.getElementById("apres2");
+				interf.fig1 = document.getElementById("fig1");
+				interf.fig2 = document.getElementById("fig2");
+				interf.fig3 = document.getElementById("fig3");
+				interf.fig4 = document.getElementById("fig4");
+				interf.zoom = document.getElementById("zoom");
+				interf.ficha = document.getElementById("ficha");
+				interf.dtAno = document.getElementById("dtAno");
+				interf.dtPeso = document.getElementById("dtPeso");
+				interf.dtCil = document.getElementById("dtCil");
+				interf.dtMotor = document.getElementById("dtMotor");
+				interf.dtPot = document.getElementById("dtPot");
+				interf.dtBin = document.getElementById("dtBin");
+				interf.dtVel = document.getElementById("dtVel");
+				interf.dtAcel = document.getElementById("dtAcel");
+				interf.dtDim = document.getElementById("dtDim");
+				interf.marcaModelo = document.getElementById("marcaModelo");
+				interf.versao = document.getElementById("versao");
+				interf.prg1 = document.getElementById("prg1");
+				interf.prg2 = document.getElementById("prg2");
+				interf.lista = document.getElementById("lista");
+			}
+			//inicializa o interface no seu estado inicial
+			function inicInterf(){
+				interf.apres1.style.width = (2*LFIG+6) + "px";
+				interf.ficha.style.width = (2*LFIG+6) + "px";
+				document.getElementsByClassName("etik1")[0].style.width = (LFIG-5) + "px";
+				interf.apres2.style.left = (2*LFIG+22) + "px";
+				interf.prg1.style.width = (LFIG+12) + "px";
+				interf.prg2.style.width = (LFIG+12) + "px";
+				interf.fig1.width = LFIG;
+				interf.fig2.width = LFIG;
+				interf.fig3.width = LFIG;
+				interf.fig4.width = LFIG;
+				interf.zoom.width = (2*LFIG+4);
+				interf.zoom.height = (1.4*LFIG+4);
+				carregaLista();	
+				move(1);
+			}
+			//carrega a lista de opções
+			function carregaLista(){
+				var i, nc = numCarros(), listaOp = "";
+				for(i = 1;i < nc;i++){
+					listaOp += "<option>" + marcaModelo(i) + " - " + versao(i) + "</option>";
+				}
+				lista.innerHTML = listaOp;
+			}
+			//move a "cabeça de leitura" na base de dados, o número de passos indicados
+			function move(np){
+				var nMax = numCarros();
+				esconde();
+				n += np;
+				if(n < 1) n = nMax; if(n > nMax) n = 1;
+				interf.fig1.src = PATH + imag(n, 0);
+				interf.fig2.src = PATH + imag(n, 1);
+				interf.fig3.src = PATH + imag(n, 2);
+				interf.fig4.src = PATH + imag(n, 3);
+				//marca/modelo e versão
+				interf.marcaModelo.innerHTML = marcaModelo(n);
+				interf.versao.innerHTML = versao(n);
+				//ficha-técnica 
+				interf.dtAno.innerHTML = ano(n);
+				interf.dtPeso.innerHTML = peso(n) + " kg";
+				interf.dtCil.innerHTML = cilindrada(n) + " cm³";
+				interf.dtMotor.innerHTML = tipoMotor(n);
+				interf.dtPot.innerHTML = potencia(n) + " cv, às " + rotPotencia(n) + " rpm";
+				interf.dtBin.innerHTML = binario(n) + " Nm, às " + rotBinario(n);
+				interf.dtVel.innerHTML = velMaxima(n) + " km/h";
+				interf.dtAcel.innerHTML = "0 - 100 km/h em " + acel_0_100(n) + " seg";
+				interf.dtDim.innerHTML = comprimento(n) + " mm x " + largura(n) + " mm x " + altura(n) + " mm";
+				//parágrafos do texto
+				interf.prg1.innerHTML = paragDescr(n, 0);
+				interf.prg2.innerHTML = paragDescr(n, 1);
+			} 
+			//amplia a imagem indicada
+			function zoom(fig){
+				interf.zoom.src = fig.src;
+				interf.zoom.style.visibility = "visible";
+			}
+			//esconde a imagem zoom
+			function esconde(){
+				interf.zoom.style.visibility = "hidden";
+			}
+		</script>
+	</head>
+	<body>
+		<div id="apres1">
+			<img class="fig" id="fig1" onclick="zoom(this)"/>
+			<img class="fig" id="fig2" onclick="zoom(this)"/>
+			<img class="fig" id="fig3" onclick="zoom(this)"/>
+			<img class="fig" id="fig4" onclick="zoom(this)"/>
+			<img id="zoom" onclick="esconde()"/>
+			<table id="ficha">
+				<tr>
+					<td class="etik1">ano de lançamento:</td>
+					<td class="dadoTec" id="dtAno"></td>
+				</tr>
+				<tr>
+					<td class="etik1">peso:</td>
+					<td class="dadoTec" id="dtPeso"></td>
+				</tr>
+				<tr>
+					<td class="etik1">cilindrada:</td>
+					<td class="dadoTec" id="dtCil"></td>
+				</tr>
+				<tr>
+					<td class="etik1">tipo de motor:</td>
+					<td class="dadoTec" id="dtMotor"></td>
+				</tr>
+				<tr>
+					<td class="etik1">potência máxima</td>
+					<td class="dadoTec" id="dtPot"></td>
+				</tr>
+				<tr>
+					<td class="etik1">binário máximo</td>
+					<td class="dadoTec" id="dtBin"></td>
+				</tr>
+				<tr>
+					<td class="etik1">velocidade máxima:</td>
+					<td class="dadoTec" id="dtVel"></td>
+				</tr>
+				<tr>
+					<td class="etik1">aceleração máxima:</td>
+					<td class="dadoTec" id="dtAcel"></td>
+				</tr>
+				<tr>
+					<td class="etik1">comp x larg x alt:</td>
+					<td class="dadoTec" id="dtDim"></td>
+				</tr>
+			</table>
+		</div>
+		<table id="apres2">
+			<tr>
+				<td colspan="2">
+					<button onclick="move(-1)"><<<</button>
+					<button onclick="move(1)">>>></button>
+					<select id="lista">
+						
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" id="refCarro">
+					<span id="marcaModelo"></span><br />
+					<span id="versao"></span>
+				</td>
+			</tr>
+			<tr>
+				<td id="prg1"></td>
+				<td id="prg2"></td>
+			</tr>
+		</table>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.08.03 - Círculos Móveis</title>
+		<style>
+		</style>
+		<script>
+			var canvas = {}
+			function inic(){
+				canvas.tela = document.getElementById(tela1);
+				canvas.graf = canvas.tela.getContext("2d");	
+				canvas.larg = tela.width; canvas.alt = tela.height;
+			}
+			//gera uma cor aleatória
+			function corAleat(){
+				var r = Math.floor(Math.random()*256);
+				var g = Math.floor(Math.random()*256);
+				var b = Math.floor(Math.random()*256);
+				return "rgb(" + r + "," + g + "," + b + ")"; 
+			}
+		</script>
+	</head>
+	<body>
+		<canvas id="tela1" width="800" height="600"></canvas>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

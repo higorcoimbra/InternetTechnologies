@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula 03.02 - Introd. Hipercarros</title>
+		<style>
+			.fig {cursor: pointer;} 
+			#apres{position: absolute;}
+			#zoom{position: absolute; left: "0px"; top: "0px";}
+		</style>
+		<script src="../Recursos/HiperCarros/HiperCarrosBD.js"></script>
+		<script src="../Recursos/HiperCarros/HiperCarrosPars.js"></script>
+		<script>
+			/******************* CONSERTAR NESSE CÓDIGO ********************/
+			/** FAZER O STYLE DO 'ZOOM' E 'APRES' FUNCIONAR ESTATICAMENTE **/
+			var LFIG = 250, PATH = "../Recursos/HiperCarros/";
+			var n=0, interf = {};
+			function inic(){
+				adqInterf();
+				inicInterf();
+			}
+			//adquire as referências para o interface estático
+			function adqInterf() {
+				interf.apres = document.getElementById("apres");
+				interf.fig1 = document.getElementById("fig1");
+				interf.fig2 = document.getElementById("fig2");
+				interf.fig3 = document.getElementById("fig3");
+				interf.fig4 = document.getElementById("fig4");
+				interf.zoom = document.getElementById("zoom");
+				interf.refCarro = document.getElementById("refCarro");
+			}
+			//inicializa o interface no seu estado inicial
+			function inicInterf(){
+				interf.fig1.width = LFIG;
+				interf.fig2.width = LFIG;
+				interf.fig3.width = LFIG;
+				interf.fig4.width = LFIG;
+				interf.zoom.width = (2*LFIG+4);
+				interf.zoom.height = (1.4*LFIG+4);
+				interf.apres.style.width = (2*LFIG+5) + "px";
+				interf.apres.style.position = "absolute";
+				interf.zoom.style.position = "absolute";
+				interf.zoom.style.left = 0+"px";
+				interf.zoom.style.top = 0+"px";
+				move(1);
+			}
+			//move a "cabeça de leitura" na base de dados, o número de passos indicados
+			function move(np){
+				var nMax = numCarros();
+				esconde();
+				n += np;
+				if(n < 1) n = nMax; if(n > nMax) n = 1;
+				interf.fig1.src = PATH + imag(n, 0);
+				interf.fig2.src = PATH + imag(n, 1);
+				interf.fig3.src = PATH + imag(n, 2);
+				interf.fig4.src = PATH + imag(n, 3);
+				interf.refCarro.innerHTML = marcaModelo(n) + " - " + versao(n);
+			} 
+			//amplia a imagem indicada
+			function zoom(fig){
+				interf.zoom.src = fig.src;
+				interf.zoom.style.visibility = "visible";
+			}
+			//esconde a imagem zoom
+			function esconde(){
+				interf.zoom.style.visibility = "hidden";
+			}
+		</script>
+	</head>
+	<body>
+		<div id="apres">
+			<img class="fig" id="fig1" onclick="zoom(this)"/>
+			<img class="fig" id="fig2" onclick="zoom(this)"/>
+			<img class="fig" id="fig3" onclick="zoom(this)"/>
+			<img class="fig" id="fig4" onclick="zoom(this)"/>
+			<img id="zoom" onclick="esconde()"/>
+			<h2 id="refCarro"></h2>
+			<button onclick="move(-1)">recua</button>
+			<button onclick="move(1)">avança</button>
+		</div>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

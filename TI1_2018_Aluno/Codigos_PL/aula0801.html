@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.08.01 - Cartas Dinâmicas #1</title>
+		<style>
+		</style>
+		<script>
+			var PATH = "../Recursos/img02/"
+			var NPS = ["paus", "ouros", "copas", "espadas"];
+			var FGS = ["duque","terno","quadra","quina","sena","sete","oito","nove","dez","valete","dama","rei","ás"];
+			var bar1;
+			function inic(){
+				bar1 = baralho();
+				baralhaBaralho(bar1, 100);
+				espalhaBodyBaralho(bar1, {xMin:100, xMax:400, yMin:100, yMax:400});
+			}
+			//gera uma carta de determinado naipe (1-4) e determinada figura (1-13), sob a forma de um elemento imagem
+			function carta(naipe, figura){
+				var carta = document.createElement("img");
+				carta.setAttribute("src", PATH+"c"+(100*naipe+figura)+".gif");
+				return carta;
+			} 
+
+			//gera um baralho de cartas, sob a forma de um array de imagens "carta"
+			function baralho(){
+				var naipe, figura, baralho = [];
+				for(naipe = 1; naipe <= 4; naipe++){
+					for(figura = 1; figura <= 13; figura++){
+						baralho.push(carta(naipe, figura));
+					}
+				}
+				return baralho;
+			}
+
+			//mostra no body o baralho indicado
+			function mostraBodyBaralho(baralho){
+				var i, nCartas = baralho.length;
+				for(i = 0; i < nCartas; i++){
+					document.body.appendChild(baralho[i]);
+				}
+			}
+
+			//baralha o baralho indicado através do número indicado de trocas sucessivas
+			function baralhaBaralho(baralho, nTrocas){
+				var i, p1, p2, aux, nCartas = baralho.length;
+				for(i = 0; i < nTrocas; i++){
+					p1 = Math.floor(Math.random()*nCartas);
+					p2 = Math.floor(Math.random()*nCartas);
+					aux = baralho[p1];
+					baralho[p1] = baralho[p2]; baralho[p2] = aux;
+				}
+			}
+
+			//esparalho um baralho aleatoriamente num espaço do body limitado pelo objeto limitador {xMin, xMax, yMinn, yMax} (espaço para os vértices superiores esquerdos das cartas)
+			function espalhaBodyBaralho(baralho, objLim){
+				var i, nCartas = baralho.length;
+				for(i = 0; i < nCartas; i++){
+					baralho[i].style.position = "absolute";
+					baralho[i].style.left = (objLim.xMin+Math.random()*(objLim.xMax-objLim.xMin)) + "px";
+					baralho[i].style.top = (objLim.yMin+Math.random()*(objLim.yMax-objLim.yMin)) + "px";
+					document.body.appendChild(baralho[i]);
+				}
+			}
+
+			//gera a identificação verbal da carta indicada
+			function identCarta(carta){
+				var naipe, figura, cod = carta.src, tam = cod.length;
+				cod = parseInt(cod.substring(tam-7,tam-4), 10);
+				naipe = Math.floor(cod/100); figura = cod%100;
+				return FGS[figura-1] + " de " + NPS[naipe-1];
+			}
+
+			//gera uma etiqueta amarela (DIV) com uma mensagem e um posicionamento
+			function etiqueta(msg, x, y){
+				var etiqueta = document.createElement("div");
+				etiqueta.appendChild(document.createTextNode(msg));
+				etiqueta.style.position = "absolute";
+				etiqueta.style.left = x + "px";
+				etiqueta.style.top = y + "py";
+				etiqueta.style.backgroundColor = "#ff6";
+				etiqueta.style.font = "bold 14px verdana";
+				etiqueta.style.color = "#008";
+				etiqueta.style.border = "1px solid #008";
+				return etiqueta;
+			}
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

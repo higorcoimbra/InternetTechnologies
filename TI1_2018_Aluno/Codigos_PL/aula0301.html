@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.03.01 - Introd. Motion</title>
+		<style>
+			#abespa{position:absolute;}
+		</style>
+		<script>
+			var FS = 20;
+			var abespa, interv;
+			var movel, x, y, dx, dy, n, nF;
+			function inic(){
+				abespa = document.getElementById("abespa");
+				move(abespa, {x:50 , y:600}, {x:800 , y:50}, 5);
+			}
+			//move o objeto indicado, numa trajetória retilínia uniforme entre os pontos "pi" e "pf" (ambos são objetos {x,y}), durante o tempo indicado em segundos (considerando a velocidade de framing estabelecida no sistema)
+			function move(obj, pi, pf, tempo){
+				n = 0; movel = obj; nF = tempo*FS;
+				x = pi.x; y = pi.y;
+				dx = (pf.x - pi.x)/nF; dy = (pf.y - pi.y)/nF;
+				interv = setInterval(salta, 1000/FS);
+			}
+
+			function salta(){
+				movel.style.left = (x + n*dx) + "px";
+				movel.style.top = (y + n*dy) + "px";
+				n++; if(n > nF) clearInterval(interv);
+			}
+		</script>
+	</head>
+	<body>
+		<img id="abespa" src="../Recursos/img01/abelha.gif" width="40"/>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

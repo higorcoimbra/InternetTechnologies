@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Demo.04.09 - Animações de atributos</title>
+		<style>
+			#anim, #movel {position: absolute; left: 10px; width: 60px;}
+			#anim {top: 10px; height: 20px;}
+			#movel {top:40px; height:60px; border: 2px solid #00f; background-color: #f80;}
+		</style>
+		<script src="../Recursos/jQuery/jquery-3.3.1.min.js"></script>
+		<script>
+			function inic(){
+				//quando o botão "anim" é clicado
+				$("#anim").click(function(){
+					//executa sequência de animações do objeto "movel"
+					$("#movel").animate({left:'500px'},1000);
+					$("#movel").animate({top:'300px'},1000);
+					$("#movel").animate({width:'300px'},1000);
+					$("#movel").animate({height:'300px'},1000);
+					$("#movel").animate({borderWidth:'20px'},1000);
+					$("#movel").animate({left:'10px'}, {top:'40px'}, {width:'60px'}, {height:'60px'},{borderWidth:'2px'},3000);
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<button id="anim">animar</button>
+		<div id="movel"></div>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

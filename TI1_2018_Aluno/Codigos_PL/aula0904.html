@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.09.03 - Círculos Móveis #3</title>
+		<style>
+			#tela1{border: 2px dotted #f80;}
+		</style>
+		<script>
+			var TFRAME = 40;
+			var lista1, anim1, canvas1 = {};
+			function inic(){
+				var bolinha;
+				canvas1.tela = document.getElementById("tela1");
+				canvas1.graf = canvas1.tela.getContext("2d");	
+				canvas1.larg = canvas1.tela.width; 
+				canvas1.alt = canvas1.tela.height;
+				lista1 = listaBolas(100, canvas1.larg, canvas1.alt, [20, 40], [0.25, 0.75], 100);
+				recolocaBolas(lista1, canvas1);
+				mostraBolas(canvas1, lista1);
+				anim1 = setInterval(mostraNovaFrame, TFRAME, canvas1, lista1);
+			}
+			//gera uma cor aleatória
+			function corAleat(){
+				var r = Math.floor(Math.random()*256);
+				var g = Math.floor(Math.random()*256);
+				var b = Math.floor(Math.random()*256);
+				return "rgb(" + r + "," + g + "," + b + ")"; 
+			}
+			//gera um objeto "bola aleatória animável", {x, y, r, cor, opac, vx, vy} (coordenadas, raio, cor, grau de opacidade e projeções da velocidade), indicando os limites máximos para as coordenadas, x e y, e para as projeções da velocidade, vx ou vy, e arrays com os limites mínimo e máximo par ao raio e para a opacidade.
+			function novaBolaAnim(xMax, yMax, limsR, limsOpac, pvMax){
+				var bola = {};
+				bola.x = xMax * Math.random();
+				bola.y = yMax * Math.random();
+				bola.cor = corAleat();
+				bola.r = limsR[0] + (limsR[1] - limsR[0]) * Math.random();
+				bola.opac = limsOpac[0] + (limsOpac[1] - limsOpac[0]) * Math.random();
+				bola.vx = pvMax * (2*Math.random()-1);
+				bola.vy = pvMax * (2*Math.random()-1);
+				return bola;
+			}
+
+			//mostra, num qualquer CANVAS, uma "bola aleatória animável", com um contorno negro de 1px de espessura
+			function mostraBola(canvas, bola){
+				canvas.graf.fillStyle = bola.cor;
+				canvas.graf.globalAlpha = bola.opac;
+				canvas.graf.strokeStyle = "#000";
+				canvas.graf.lineWidth = 1;
+				canvas.graf.beginPath();
+				canvas.graf.arc(bola.x, bola.y, bola.r, 0, 2*Math.PI);
+				canvas.graf.closePath();
+				canvas.graf.fill(); canvas.graf.stroke();
+			}
+
+			//gera uma lista (array) de objetos "bola aleatória animável", {x, y, r, cor, opac, vx, vy} (coordenadas, raio, cor, grau de opacidade e projeções da velocidade), indicando o número de "bolas" na lista, os limites máximos para as coordenadas, x e y, e para as projeções da velocidade, vx ou vy, e arrays com os limites mínimo e máximo par ao raio e para a opacidade.
+			function listaBolas(nBolas, xMax, yMax, limsR, limsOpac, pvMax){
+				var i, lista = [];
+				for(i = 0; i < nBolas; i++){
+					lista.push(
+						novaBolaAnim(xMax, yMax, limsR, limsOpac, pvMax)
+					);
+				}
+				return lista;
+			}
+
+			//mostra, num qualquer CANVAS, as "bolas aleatórias animáveis", de uma determinada lista, com um contorno negro de 1px de espessura
+			function mostraBolas(canvas, lista){
+				var i, nBolas = lista.length;
+				for(i = 0; i < nBolas; i++){
+					mostraBola(canvas, lista[i]);
+				}
+			}
+
+			//estabelece um novo estado posicional das "bolas aleatórias animáveis" de uma determinada lista e para um determinado CANVAS, após um intervalo entre frames
+			function novaFrame(lista, canvas){
+				var i, nBolas = lista.length;
+				for(i = 0; i < nBolas; i++){
+					lista[i].x += (TFRAME/1000)*lista[i].vx;
+					lista[i].y += (TFRAME/1000)*lista[i].vy;
+					if(lista[i].x < lista[i].r) lista[i].vx *= -1;
+					if(lista[i].y < lista[i].r) lista[i].vy *= -1;
+					if(lista[i].x > canvas.larg-lista[i].r) lista[i].vx *= -1;
+					if(lista[i].y > canvas.alt-lista[i].r) lista[i].vy *= -1;
+				}
+			}
+
+			//mostra, num qualquer CANVAS, uma nova frame de uma determinada lista de "bolas aleatórias animáveis"
+			function mostraNovaFrame(canvas, lista){
+				novaFrame(lista, canvas);
+				canvas.graf.clearRect(0, 0, canvas.larg, canvas.alt);
+				mostraBolas(canvas, lista);
+			}	
+
+			//recoloca todas as bolas dentro do CANVAS
+			function recolocaBolas(lista, canvas){
+				var i, nBolas = lista.length;
+				for(i = 0; i < nBolas; i++){
+					if(lista[i].x < lista[i].r) lista[i].x = lista[i].r;
+					if(lista[i].y < lista[i].r) lista[i].y = lista[i].r;
+					if(lista[i].x > canvas.larg-lista[i].r) lista[i].x = canvas1.larg+lista[i].r;
+					if(lista[i].y > canvas.alt-lista[i].r) lista[i].y = canvas.alt-lista[i].r;
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<canvas id="tela1" width="800" height="600"></canvas>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

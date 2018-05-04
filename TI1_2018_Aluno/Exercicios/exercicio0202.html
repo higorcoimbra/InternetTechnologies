@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Exerc.02.02</title>
+		<style>
+		</style>
+		<script>
+			//retorna e média das distância de um conjunto de pontos em um mesmo referencial plano
+			function medDistArrayPts(arrayPts){
+				var i, j, nPts = arrayPts.length, soma = 0, nDists;
+				for(nDists = 0, i = 0; i < nPts-1; i++){
+					for(j = i+1; j < nPts; j++, nDists++){
+						soma += dist(arrayPts[i], arrayPts[j]);
+					}
+				}
+				return soma/nDists;
+			}
+
+			function inic(){
+				document.write(medDistArrayPts(pontos).toFixed(2));
+			}
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

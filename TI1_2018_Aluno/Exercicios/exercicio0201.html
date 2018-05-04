@@ -6,10 +6,45 @@
 		<style>
 		</style>
 		<script>
+			//exprime a distância entre dois pontos (objetos {x,y}) de um mesmo referencial plano
+			function dist(pt1, pt2){
+				return Math.sqrt(Math.pow(pt2.x-pt1.x, 2)+Math.pow(pt2.y-pt1.y,2));
+			}
+
+			//retorna um objeto {i1, i2, dist} contendo: índice de dois pontos com a maior distância dentre um conjunto de pontos de um mesmo referencial plano.
+			function maxDistArrayPts(arrayPts){
+				var i, j, nPts = arrayPts.length, max = {i1:0, i2:0, dist:0}, d;
+				for(i = 0;i < nPts-1; i++){
+					for(j = i+1; j < nPts; j++){
+						d = dist(arrayPts[i], arrayPts[j]);
+						if(d > max.dist){
+							max.i1 = i;
+							max.i2 = j;
+							max.dist = d;
+						}
+					}
+				}
+			}
+
+			//desenha uma linha reta entre dois pontos objetos {x, y}
+			function mostraLinha(pt1, pt2, graf, cor, esp){
+				graf.strokeStyle = cor; graf.lineWidth = esp;
+				graf.beginPath();
+				graf.moveTo(pt1.x, pt1.y); graf.lineTo(pt2.x, pt2.y);
+				graf.stroke();
+			}
+
+			function inic(){
+				var objMax = maxDistArrayPts(pontos);
+				document.write('<br>' + objMax.dist.toFixed(2));
+				mostraPts(pontos, graf1, #080, 7);
+				mostraLinha(graf1, pontos[objMax.i1], pontos[objMax.i2], '#f00', 3);
+			}
 		</script>
 	</head>
 	<body>
 		<script>
+			inic();
 		</script>
 	</body>
 </html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Exerc.02.03</title>
+		<style>
+		</style>
+		<script>
+			//retorna uma lista de pontos que possuem distância entre si menores que a média das distâncias do conjunto total de um mesmo referencial plano
+			function listaProxArrayPts(arrayPts){
+				var media = medDistArrayPts(arrayPts);
+				var i, j, nPts = arrayPts.length, lista = [];
+				for(i = 0;i < nPts-1; i++){
+					for(j = i+1; j < nPts; j++){
+						if(d < media){
+							lista.push({indA: i, indB: j});
+						}
+					}
+				}
+				return lista;
+			}	
+
+			function inic(){
+				
+			}
+		</script>
+	</head>
+	<body>
+		<script>
+		</script>
+	</body>
+</html>
