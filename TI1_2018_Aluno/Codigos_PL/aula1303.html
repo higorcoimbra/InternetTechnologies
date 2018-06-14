@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.13.03 - Setor de Gráfico Circular</title>
+		<style>
+			#tela1{border:2px dotted #f84;}
+		</style>
+		<script>
+			var canvas1;
+			function inic(){
+				canvas1 = document.getElementById("tela1");
+				desSetor(canvas1, 400, 300, 200, 0.25, 0, "#008", "#ff0", "superior", "inferior", "arial", 24);
+				desSetor(canvas1, 400, 300, 200, 1, 0.25, "#008", "#00f", "superior", "inferior", "arial", 24);
+				desSetor(canvas1, 400, 300, 200, 2, 1.25, "#008", "#f88", "superior", "inferior", "arial", 24);
+				desSetor(canvas1, 400, 300, 200, 0.75, 3.25, "#008", "#4ff", "superior", "inferior", "arial", 24);
+			}
+
+			function desSetor(canvas, x, y, raio, angArco, angInic, corLin, corFnd, etkSup, etkInf, fonte, corpo){
+				var graf = canvas.getContext("2d");
+				//ângulo da bissetriz
+				var angBis = angInic + angArco/2;
+				//desenha e pinta o setor
+				graf.fillStyle = corFnd; graf.globalAlpha = 1;
+				graf.strokeStyle = corLin; graf.lineWidth = raio/30;
+				graf.lineJoin = "round";
+				graf.beginPath();
+				graf.moveTo(x, y);
+				graf.lineTo(
+					x + raio*Math.cos(angInic),
+					y - raio*Math.sin(angInic)
+				);
+				graf.arc(x, y, raio, -angInic, -angInic-angArco, true);
+				graf.closePath();
+				graf.fill(); graf.stroke();
+				//desenha a linha de chamada
+				graf.globalAlpha = 0.5; graf.lineWidth = raio/60;
+				graf.moveTo(
+					x + (4/5)*raio*Math.cos(angBis),
+					y - (4/5)*raio*Math.sin(angBis)
+				);
+				graf.lineTo(
+					x + (6/5)*raio*Math.cos(angBis),
+					y - (6/5)*raio*Math.sin(angBis)
+				);
+				graf.stroke();
+				//desenha as etiquetas
+				graf.fillStyle = corLin; graf.globalAlpha = 1;
+				graf.font = "bold " + corpo +"px " + fonte;
+				graf.textAlign = "center"; graf.textBaseLine = "bottom";
+				graf.fillText(
+					etkSup,
+					x + (7/5)*raio*Math.cos(angBis),
+					y - (7/5)*raio*Math.sin(angBis)
+				);
+				graf.textBaseLine = "top";
+				graf.fillText(
+					etkInf,
+					x + (7/5)*raio*Math.cos(angBis),
+					y - (7/5)*raio*Math.sin(angBis)
+				);
+			}
+			
+		</script>
+	</head>
+	<body>
+		<canvas id="tela1" width="800" height="600"></canvas>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

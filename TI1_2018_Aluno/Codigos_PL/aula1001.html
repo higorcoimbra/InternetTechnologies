@@ -2,12 +2,11 @@
 <html lang="pt">
 	<head>
 		<meta charset="utf-8" />
-		<title>Aula.10.01 - Variáveis de Tabela</title>
+		<title>Aula.10.01 - Variáveis de Tabela #1</title>
 		<style>
 		</style>
 		<script src="../Recursos/jQuery/jquery-3.3.1.min.js"></script>
 		<script>
-			var tabela1;
 			var amplitCab = {
 
 			};
@@ -47,12 +46,16 @@
 				{mes:12, laranja:100, banana:100, kiwi:61}
 			];
 			function inic(){
+				var tabela1;
+				//tabela web para a variável "dados1"
 				tabela1 = geraTabela1(dados1, {amplit: amplitCab, estilo: estiloCab}, {amplit: amplitCel, estilo: estiloCel});
-				tabela2 = geraTabela1(detalhes, {amplit: amplitCab, estilo: estiloCab}, {amplit: amplitCel, estilo: estiloCel});
 				document.body.appendChild(tabela1);
+				document.body.appendChild(document.createElement("hr"));
+				//tabela web para a variável "detalhes"
+				tabela2 = geraTabela1(detalhes, {amplit: amplitCab, estilo: estiloCab}, {amplit: amplitCel, estilo: estiloCel});
 				document.body.appendChild(tabela2);
 			}
-			//gera uma tabela para apresentação dos dados de uma variável-tabela (tipo1, comum), de acordo com dois objetos de formatação das células dos cabeçalhos e das células dos dados, com a forma geral de {amplit, estilo}
+			//gera uma tabela para apresentação dos dados de uma variável-tabela (tipo2, a mais simples), de acordo com dois objetos de formatação das células dos cabeçalhos e das células dos dados, com a forma geral de {amplit, estilo}
 			function geraTabela1(varTab, formCabs, formDados){
 				var i, j,tabela, prop, nLins, nCols, iCel;
 				var estrut = {lins:[], cabs:[], dados:[]};
@@ -82,16 +85,10 @@
 				for(iCel = 0, i = 1; i < nLins; i++){
 					for(j = 0; j < nCols; j++, iCel++){
 						estrut.dados[iCel] = document.createElement('td');
-						if(j == 0)
-							configCel(
-								estrut.dados[iCel], estrut.lins[i],
-								varTab[i][varTab[0][j]], formCabs.amplit, formCabs.estilo
-							);
-						else
-							configCel(
-								estrut.dados[iCel], estrut.lins[i],
-								varTab[i][varTab[0][j]], formDados.amplit, formDados.estilo
-							);
+						configCel(
+							estrut.dados[iCel], estrut.lins[i],
+							varTab[i][varTab[0][j]], formDados.amplit, formDados.estilo
+						);
 					}
 				}
 				return tabela;

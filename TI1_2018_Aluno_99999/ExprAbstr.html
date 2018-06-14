@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Expressionismo Abstrato - Aluno 99999</title>
+		<style>
+			body{background-color: #066;}
+			#apres0{position: absolute; left:20px; top:25px; width: 60%;}
+			.imgArt{
+				width: 90%;
+				border: 1px solid white;
+			}
+			#introdBox{background-color: #ddd; vertical-align: top; padding: 15px 15px 0px 15px;}
+			#tituloIntrod, #subtituloIntrod{font-family: verdana;}
+			.paragIntrod{font: 16px/1.5 verdana; text-align: justify;}
+			#miniDescBox{width:27%;}
+			.miniDesc{color:#fff; font: 14px verdana; width: 90%;}
+		</style>
+		<script src="../ExprAbstr/ExprAbstrBD.js"></script>
+		<script src="ExprAbstrPars.js"></script>
+		<script>
+			var PATH = "../ExprAbstr/";
+			var interf = {}
+			
+			//inicialização
+			function inic(){
+				adqInterf();
+				inicInterf();
+			}
+
+			//adquire as referências para o interface estático
+			function adqInterf() {
+				interf.miniDescBox = document.getElementById("miniDescBox");
+				interf.introdBox = document.getElementById("introdBox");
+			}
+
+			//inicializa o interface no seu estado inicial
+			function inicInterf(){
+				var i, miniDesc, introd;
+				//preenchimento da primeira coluna com foto e mini descrição dos artistas
+				for(i = 0; i < nPintores(); i++){
+					miniDesc = "<img class=\"imgArt\"" + "id=\"" + "art" + i + "\" " + "src=\"" + PATH + pintor(i).foto + "\"></img>";
+					miniDesc += "<br>";
+					miniDesc += "<p class=\"miniDesc\">" + "<b>" + pintor(i).nome + "</b>";
+					miniDesc += ", pintor de nacionalidade " + pintor(i).nacion;
+					miniDesc += ", nascido em " + data(i, "nascimento");
+					miniDesc += " em " + pintor(i).localNasc;
+					miniDesc += ", e falecido a " + data(i, "morte");
+					miniDesc += " em " + pintor(i).localMorte + ".<p>";
+					interf.miniDescBox.innerHTML += miniDesc;
+				}
+				//preenchimento da segunda coluna com a introdução sobre o Expressionismo Abstrato
+				introd = "<h2 id=\"tituloIntrod\">" + titulo() + "</h2><br>";
+				introd += "<h3 id=\"subtituloIntrod\">" + subtitulo() + "</h3><br>";
+				for(i = 0; i < nParagIntrod(); i++){
+					introd += "<p class=\"paragIntrod\">" + paragIntrod(i) + "</p>";
+				}
+				introd += "<br>" + "<p class=\"paragIntrod\">"+ "<i>(clique nas fotos para informação sobre os pintores)</i>"+ "</p>"
+				interf.introdBox.innerHTML = introd;
+			}
+
+		</script>
+	</head>
+	<body>
+		<!-- colocar nas imagens ids com nome de "photo01/02/03" a exemplo, quando clica na imagem, vai ler o id do índice e mostra o artista que está no vetor de artista -->
+		<!-- o fundo é azul turquesa 044/055/066 -->
+		<!-- a interface é uma tabela com uma linha e duas colunas todas até embaixo  -->
+		<!-- as imagens da primeira coluna tem filete branco de 1px -->
+		<!-- quando clica na imagem substitui uma tabela por outra, uma de duas linhas com 3 células,
+				1ª não tem nada na primeira e na terceira
+				2ª na primeira coluna dessa linha tem a mesma informação da tabela anterior (1ª coluna).
+				 -->
+		<!-- tem que se ter uma variável pública para dizer qual o pintor exibido,  -->
+		<!-- o interface que aparece só um quadro é um div -->
+		<!-- todos as interfaces tem posicionamento absoluto-->
+		<!-- 180px as imagens do pintor, 280px as imagens do quadro, na tela que tem o artista selecionado -->
+		<!-- tamanho da tabela em 100% -->
+		<!-- existem algumas strings com estilo diferente no texto, fazer o parsing da string já com o estilo -->
+		<table id="apres0">
+			<tr>
+				<td id="miniDescBox"></td>
+				<td id="introdBox"></td>
+			</tr>
+		</table>	
+	
+
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

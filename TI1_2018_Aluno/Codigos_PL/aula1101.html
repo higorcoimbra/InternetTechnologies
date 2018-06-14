@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.11.01 - Barras para gráficos</title>
+		<style>
+			#tela1{border:2px dotted #f84;}
+		</style>
+		<script>
+			var canvas1;
+			function inic(){
+				canvas1 = document.getElementById("tela1");
+				desBarra(
+					canvas1, 150, 500, 100, 400, "#800", "#8ff", 
+					"inferior", "superior", "arial", 25
+				);
+				desBarra(
+					canvas1, 350, 500, 75, 270, "#800", "#8ff", 
+					"inferior", "superior", "arial", 19
+				);
+				desBarra(
+					canvas1, 550, 500, 50, 200, "#800", "#8ff", 
+					"inferior", "superior", "arial", 14
+				);
+				desBarra(
+					canvas1, 750, 500, 30, 120, "#800", "#8ff", 
+					"inferior", "superior", "arial", 10
+				);
+			}
+
+			//desenha num CANVAS uma barra bi-etiquetada, dados: coordenadas (x, y) do centro da base da barra, largura, altura, cor do contorno e cor do fundo da barra, etiquetas inferior e superior, fonte e corpo tipográficos. NOTAS: 1. A cor das etiquetas é a mesma do contorno; 2. A espessura do contorno é 1/20 da largura da barra
+			function desBarra(canvas, x, y, larg, alt, corLin, corFnd, etkInf, etkSup, fonte, corpo){
+				var graf = canvas.getContext("2d");
+				//desenha a barra
+				graf.fillStyle = corFnd;
+				graf.strokeStyle = corLin; graf.lineWidth = larg/20;
+				graf.fillRect(x-larg/2, y-alt, larg, alt);
+				graf.strokeRect(x-larg/2, y-alt, larg, alt);
+				//desenha as etiquetas
+				graf.fillStyle = corLin;
+				graf.font = "bold " + corpo + "px " + fonte;
+				graf.textAlign = "center"; graf.textBaseline = "middle";
+				graf.fillText(etkInf, x, y + 2/3*corpo);
+				graf.fillText(etkSup, x, y- alt - 2/3*corpo)
+			}
+
+			
+		</script>
+	</head>
+	<body>
+		<canvas id="tela1" width="800" height="600"></canvas>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

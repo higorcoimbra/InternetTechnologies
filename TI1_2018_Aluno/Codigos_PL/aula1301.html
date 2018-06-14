@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.13.01 - Dados para gráficos #2</title>
+		<style>
+		</style>
+		<script src="../Recursos/jQuery/jquery-3.3.1.min.js"></script>
+		<script>
+			var amplitCab = {
+				width: 50
+			};
+			var estiloCab = {
+				font:"bold 14px arial", textAlign:"right",
+				backgroundColor: "#800", color: "#fff" 
+			};
+			var amplitCel = {
+
+			};
+			var estiloCel = {
+				font:"bold 14px verdana", textAlign:"right",
+				backgroundColor: "#fca", color: "#800" 
+			};
+			//variável-tabela, acrescentada artificalmente do array de nomes das propriedades, com detalhes
+			var detalhes=[
+				["mes", "laranja", "banana", "kiwi"],
+				{mes:1, laranja:150, banana:50, kiwi:37}, 
+				{mes:2, laranja:120, banana:40, kiwi:59}, 
+				{mes:3, laranja:100, banana:60, kiwi:49}, 
+				{mes:4, laranja:100, banana:60, kiwi:42}, 
+				{mes:5, laranja:115, banana:50, kiwi:50}, 
+				{mes:6, laranja:130, banana:80, kiwi:31}, 
+				{mes:7, laranja:150, banana:110, kiwi:45}, 
+				{mes:8, laranja:150, banana:140, kiwi:55}, 
+				{mes:9, laranja:150, banana:140, kiwi:60}, 
+				{mes:10, laranja:150, banana:130, kiwi:60}, 
+				{mes:11, laranja:120, banana:100, kiwi:103}, 
+				{mes:12, laranja:100, banana:100, kiwi:61}
+			];
+			function inic(){
+				var dados1 = dadosLinTab(detalhes, 12);
+				mostraAtomo(dados1.nome);
+				mostraArray(dados1.etiqs);
+				mostraArray(dados1.vals);
+				mostraAtomo(dados1.max);
+			}
+
+			//descodificação da tabela detalhes
+			function descodDetalhes(){
+				var NMES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+				var i, nLins = detalhes.length;
+				for(i = 0; i < nLins; i++)	
+					detalhes[i].mes = NMES[detalhes[i].mes-1];
+			}
+
+			//gera um objeto de dados, na morma {nome, etiqs, vals, max}, de uma linha (referida pelo seu índice) de uma variável-tabela quantitativa, com caráter de dupla entrada, com o nome da relação, a lista das etiquetas, a lista de valores e o valor máximo (assumindo que o primeiro elemento da variável-tabela já é o array de nomes das propriedades)
+			function dadosLinTab(varTab, numLin){
+				var i, nCols = varTab[0].length-1, dlt = {};
+				dlt.nome = varTab[numLin][varTab[0][0]];
+				dlt.etiqs = []; dlt.vals = []; dlt.max = -Number.MAX_VALUE;
+				for(i = 1; i <= nCols; i++){
+					dlt.etiqs[i-1] = varTab[0][i];
+					dlt.vals[i-1] = varTab[numLin][varTab[0][i]];
+					if(dlt.vals[i-1] > dlt.max)
+						dlt.max = dlt.vals[i-1];
+				}
+
+				return dlt;
+			}
+			//mostra os elementos de um array no BODY (sequencialmente)
+			function mostraArray(array){
+				var i, n = array.length;
+				for(i = 0; i < n; i++)
+					document.write(array[i] + '; ');
+				document.write("<hr />");
+
+			}
+
+			//mostra um elemento atómico no BODY
+			function mostraAtomo(atomo){
+				document.write(atomo + "<hr />");
+			}
+			
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

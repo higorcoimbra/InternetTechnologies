@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<!--
+	Chama-se "variável-tabela" a todo o "array" de objectos isomórficos de conteúdos atómicos(booleanos, numéricos ou "strings").
+	
+	-->
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.13.05 - Gráficos Circulares</title>
+		<style>
+			canvas{margin-right: 10px}
+		</style>
+		<script>
+			//variáveis-tabela, acrescentadas artificialmente dos arrays de nomes das propriedades
+			
+			var dados1=[
+				["pais", "qtd"],
+				{pais:"PT", qtd:120},
+				{pais:"ES", qtd:135},
+				{pais:"FR", qtd:70},
+				{pais:"IT", qtd:125},
+				{pais:"GB", qtd:30},
+				{pais:"DE", qtd:40},
+				{pais:"NL", qtd:10}
+			];
+			
+			//detalhes de receitas de um determinado ano (milhares de euros)
+			
+			var detalhes=[
+				["mes", "laranja", "banana", "kiwi"],
+				{mes:1, laranja:150, banana:50, kiwi:37},
+				{mes:2, laranja:120, banana:40, kiwi:59},
+				{mes:3, laranja:100, banana:60, kiwi:49},
+				{mes:4, laranja:100, banana:60, kiwi:42},
+				{mes:5, laranja:115, banana:50, kiwi:50},
+				{mes:6, laranja:130, banana:80, kiwi:31},
+				{mes:7, laranja:150, banana:110, kiwi:45},
+				{mes:8, laranja:150, banana:140, kiwi:55},
+				{mes:9, laranja:150, banana:140, kiwi:60},
+				{mes:10, laranja:150, banana:130, kiwi:60},
+				{mes:11, laranja:120, banana:100, kiwi:103},
+				{mes:12, laranja:100, banana:100, kiwi:61}
+			];
+			
+			//inicialização
+			
+			function inic(){
+				var graf1;
+				graf1 = grafCircTab(
+						dados1, "coluna", 1,
+						300, 300, 55, 
+						{corLin: "#000", fonte: "arial", corpo: 12}
+				);
+
+				document.body.appendChild(graf1);
+
+			}
+
+
+			//desenha num CANVAS um setor etiquetado, dados: coordenadas (x, y) do vértice, raio, amplitude do arco, ângulo inicial, cor da linha, cor do fundo, etiqueta superior, etiqueta inferior, fonte e corpo tipográficos. NOTAS: 1) A espessura da linha é de 1/30 do raio; 2) as etiquetas são da cor da linha; 3) a linha de chamada é da cor da linha, com metade da espessura e com opacidade de 0.5
+			function desSetor(canvas, x, y, raio, angArco, angInic, corLin, corFnd, etkSup, etkInf, fonte, corpo){
+				var graf = canvas.getContext("2d");
+				//ângulo da bissetriz
+				var angBis = angInic+angArco/2;
+				//desenha e pinta o setor
+				graf.fillStyle = corFnd; graf.globalAlpha = 1;
+				graf.strokeStyle = corLin; graf.lineWidth = raio/30;
+				graf.lineJoin = "round";
+				graf.beginPath();	
+				graf.moveTo(x, y);
+				graf.lineTo(
+					x + raio * Math.cos(angInic), 
+					y - raio * Math.sin(angInic)
+				);
+				graf.arc(x, y, raio, -angInic, -angInic-angArco, true);
+				graf.closePath(); graf.fill(); graf.stroke();
+				//desenha a linha de chamada
+				graf.lineWidth = raio/60; graf.globalAlpha = 0.5;
+				graf.beginPath();	
+				graf.moveTo(
+					x + 4/5 * raio*Math.cos(angBis), 
+					y - 4/5 * raio*Math.sin(angBis)
+				);
+				graf.lineTo(
+					x + 6/5 * raio*Math.cos(angBis), 
+					y - 6/5 * raio*Math.sin(angBis)
+				);
+				graf.stroke();
+				//desenha as etiquetas
+				graf.fillStyle = corLin; graf.globalAlpha = 1;
+				graf.font = "bold "+corpo+"px "+fonte;
+				graf.textAlign = "center"; 
+				graf.textBaseline = "bottom"; 
+				graf.fillText(
+					etkSup,
+					x + 7/5 * raio*Math.cos(angBis), 
+					y - 7/5 * raio*Math.sin(angBis)
+				);
+				graf.textBaseline = "top"; 
+				graf.fillText(
+					etkInf,
+					x + 7/5 * raio*Math.cos(angBis), 
+					y - 7/5 * raio*Math.sin(angBis)
+				);
+			}
+			
+			//gera um objeto de dados, na morma {nome, etiqs, vals, tot}, de fuma coluna (referida pelo seu índice) de uma variável-tabela quantitativa, com caráter de dupla entrada, com o nome da relação, a lista das etiquetas, a lista de valores e o valor total (assumindo que o primeiro elemento da variável-tabela já é o array de nomes das propriedades)
+			function dadosColTabGC(varTab, numCol){
+				var i, nLins = varTab.length-1, dct = {};
+				dct.nome = varTab[0][numCol] + "/" + varTab[0][0];
+				dct.etiqs = []; dct.vals = []; dct.tot = 0;
+				for(i = 1; i <= nLins; i++){
+					dct.etiqs[i-1] = varTab[i][varTab[0][0]];
+					dct.vals[i-1] = varTab[i][varTab[0][numCol]];
+					dct.tot += dct.vals[i-1];
+				}
+
+				return dct;
+			}
+
+			//gera um objeto de dados, na morma {nome, etiqs, vals, max}, de uma linha (referida pelo seu índice) de uma variável-tabela quantitativa, com caráter de dupla entrada, com o nome da relação, a lista das etiquetas, a lista de valores e o valor total (assumindo que o primeiro elemento da variável-tabela já é o array de nomes das propriedades)
+			function dadosLinTabGC(varTab, numLin){
+				var i, nCols = varTab[0].length, dlt = {};
+				dlt.nome = varTab[numLin][varTab[0][0]];
+				dlt.etiqs = []; dlt.vals = []; dlt.tot = 0;
+				for(i = 1; i <= nCols; i++){
+					dlt.etiqs[i-1] = varTab[0][i];
+					dlt.vals[i-1] = varTab[numLin][varTab[0][i]];
+					dlt.tot += dlt.vals[i-1];
+				}
+
+				return dlt;
+			}
+			
+			
+			//gera um CANVAS com um gráfico linear, dados:
+			
+			//1. A variável-tabela quantitativa de dupla entrada, cujo primeiro elemento (indice 0) é já o array de nomes das propriedades (resultante da construção da respectiva tabela web)
+
+			//2. O número (indice) da coluna da referida variável-tabela a que correspondem os dados
+
+			//3. As dimensões (largura e altura) do gráfico, em pixels
+
+			//4. Um objecto de configuração de cada elemento de gráfico linear, {corMarca, corLin, espLin, fonte, corpo}, indicando, para cada elemento, a cor da marca, a cor da linha, a espessura da linha, as fonte e corpo tipográficos. NOTAS: A) o diâmetro da marca é o dobro da espessura da linha; 😎 a prumada é da cor da marca mas com metade da linha e opacidade de 0.25; C) a cor das etiquetas é a mesma da marca
+			
+			function grafCircTab(varTabProp, tipo, numRef, larg, alt, percRazao, configSet){
+				var KROMA = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#f66", "#6f6", "#66f", "#ff6", "#f6f", "#cff", "#fcc", "#cfc", "#ccf", "#ffc", "#fcf", "#cff"];
+				//iteradora, valor atual, ângulo atual, ângulo total, número de setores, escala angular, coordenadas do centro do círculo, raio do círculo, objeto de dados
+				var i, valAct, angAt, angTot = 0, nSets, escAng, x, y, raio, dadosGraf, percAct;
+				//gráfico em forma de CANVAS
+				var grafCirc = document.createElement("canvas");
+				//contexto gráfico para o CANVAS (para o título do gráfico)
+				var ctxGraf = grafCirc.getContext("2d");
+				//configuração básica do CANVAS
+				grafCirc.setAttribute("width", larg);
+				grafCirc.setAttribute("height", alt);
+				grafCirc.setAttribute("style", "border:1px solid #000");
+				//objeto de dados
+				if(tipo == "coluna") dadosGraf = dadosColTabGC(varTabProp, numRef);
+				if(tipo == "linha") dadosGraf = dadosLinTabGC(varTabProp, numRef);
+				//cálculo de: número de setores, escala angular, coordenadas do centro do círculo, raio do círculo
+				nSets = dadosGraf.etiqs.length;
+				escAng = 2*Math.PI / dadosGraf.tot;
+				x = larg/2; y = (alt - 2 * configSet.corpo) / 2;
+				raio = percRazao * larg / 200;
+				//desenha os setores etiquetados
+				for(i=0; i<nSets; i++){
+					valAct = dadosGraf.vals[i]; angAt = escAng * valAct;
+					angAct = escAng * valAct;
+					percAct = valAct / dadosGraf.tot * 100;
+					desSetor(
+						grafCirc, x, y, raio, angAt, angTot, 
+						configSet.corLin, KROMA[i], 
+						dadosGraf.etiqs[i], 
+						valAct + " (" + percAct.toFixed(1) + "%)", 
+						configSet.fonte, configSet.corpo
+					);
+					angTot += angAt;
+				}
+				//desenha o título do gráfico
+				ctxGraf.textBaseline = "middle";
+				ctxGraf.font = "bold "+(1.5*configSet.corpo)+"px "+configSet.fonte;
+				ctxGraf.fillText(dadosGraf.nome, x, alt-configSet.corpo);
+				//entrega o CANVAS com o gráfico
+				return grafCirc;	
+			}	
+			
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+			
+		</script>
+	</body>
+</html>

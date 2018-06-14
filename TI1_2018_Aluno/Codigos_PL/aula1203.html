@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!--
+Geração de gráficos lineares a partir dos dados de colunas de variáveis-tabela, artificialmente acrescentadas, à cabeça, dos arrays de nomes das propriedades. 
+-->
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.12.03 - Gráficos Lineares</title>
+		<style>
+			canvas{margin-right:10px; background-color:#ddd;}
+		</style>
+		<script>
+			//variáveis-tabela, acrescentadas artificialmente dos arrays de nomes das propriedades
+			var dados1=[
+				["pais", "qtd"],
+				{pais:"PT", qtd:120},
+				{pais:"ES", qtd:135},
+				{pais:"FR", qtd:70},
+				{pais:"IT", qtd:125},
+				{pais:"GB", qtd:30},
+				{pais:"DE", qtd:40},
+				{pais:"NL", qtd:10}
+			];
+			//detalhes de receitas de um determinado ano (milhares de euros)
+			var detalhes=[
+				["mes", "laranja", "banana", "kiwi"],
+				{mes:1, laranja:150, banana:50, kiwi:37}, 
+				{mes:2, laranja:120, banana:40, kiwi:59}, 
+				{mes:3, laranja:100, banana:60, kiwi:49}, 
+				{mes:4, laranja:100, banana:60, kiwi:42}, 
+				{mes:5, laranja:115, banana:50, kiwi:50}, 
+				{mes:6, laranja:130, banana:80, kiwi:31}, 
+				{mes:7, laranja:150, banana:110, kiwi:45}, 
+				{mes:8, laranja:150, banana:140, kiwi:55}, 
+				{mes:9, laranja:150, banana:140, kiwi:60}, 
+				{mes:10, laranja:150, banana:130, kiwi:60}, 
+				{mes:11, laranja:120, banana:100, kiwi:103}, 
+				{mes:12, laranja:100, banana:100, kiwi:61}
+			];
+			//inicilaização
+			function inic(){
+				var graf1;
+				//gráfico linear para a única coluna da variável "dados1"
+				graf1 = grafLinsColTab(
+					dados1, 1, 200, 200, 
+					{corMarca:"#00f", corLin:"#f00", espLin:3, fonte:"arial", corpo:12}
+				);
+				document.body.appendChild(graf1);
+				//gráfico linear para a primeira coluna da variável "detalhes"
+				graf1 = grafLinsColTab(
+					detalhes, 1, 300, 200, 
+					{corMarca:"#00f", corLin:"#f00", espLin:3, fonte:"arial", corpo:12}
+				);
+				document.body.appendChild(graf1);
+				//gráfico linear para a segunda coluna da variável "detalhes"
+				graf1 = grafLinsColTab(
+					detalhes, 2, 300, 200, 
+					{corMarca:"#00f", corLin:"#f00", espLin:3, fonte:"arial", corpo:12}
+				);
+				//gráfico linear para a terceira coluna da variável "detalhes"
+				document.body.appendChild(graf1);
+				graf1 = grafLinsColTab(
+					detalhes, 3, 300, 200, 
+					{corMarca:"#00f", corLin:"#f00", espLin:3, fonte:"arial", corpo:12}
+				);
+				document.body.appendChild(graf1);
+			}
+			//gera um objeto de dados, na forma {nome, etiqs, vals, max}, de uma coluna (referida pelo seu índice) de uma variável-tabela quantitativa, com caráter de dupla entrada, com o nome da relação, a lista das etiquetas, a lista de valores e o valor máximo (assumindo que o primeiro elemento da variável-tabela já é o array de nomes das propriedades)
+			function dadosColTab(varTab, numCol){
+				var dct = {};
+				var i, nLins=varTab.length - 1;
+				dct.nome = varTab[0][numCol] + "/" + varTab[0][0];
+				dct.etiqs = []; dct.vals = []; dct.max = -Number.MAX_VALUE;
+				for(i=1; i<=nLins; i++){
+					dct.etiqs[i-1] = varTab[i][varTab[0][0]];
+					dct.vals[i-1] = varTab[i][varTab[0][numCol]];
+					if(dct.vals[i-1] > dct.max) dct.max = dct.vals[i-1];
+				}
+				return dct;
+			}
+			//desenha num CANVAS uma linha desde o ponto (x1, y1) até ao ponto (x2, y2) com uma prumada e uma marca bi-etiquetadas, dados: o canvas, a ordenada da origem, as coordenadas dos dois pontos, cor da marca, cor da linha, espessura da linha, etiquetas inferior e superior, fonte e corpo tipográficos. NOTAS: A) o diâmetro da marca é o dobro da espessura da linha; B) a prumada é da cor da marca mas com metade da espessura da linha e opacidade de 0.25; C) a cor das etiquetas é a mesmo da marca
+			function desPtLin(canvas, y0, x1, y1, x2, y2, corMarca, corLin, espLin, etkInf, etkSup, fonte, corpo){
+				var graf = canvas.getContext("2d");
+				//desenha a prumada
+				graf.strokeStyle = corMarca; graf.lineWidth = espLin/2;
+				graf.globalAlpha = 0.25;
+				graf.beginPath();
+				graf.moveTo(x1, y0); graf.lineTo(x1, y0-y1);
+				graf.stroke();
+				//desenha a linha
+				graf.strokeStyle = corLin; graf.lineWidth = espLin;
+				graf.globalAlpha = 1;
+				graf.beginPath();
+				graf.moveTo(x1, y0-y1); graf.lineTo(x2, y0-y2);
+				graf.stroke();
+				//desenha a marca
+				graf.fillStyle = corMarca; graf.globalAlpha = 1;
+				graf.beginPath();
+				graf.arc(x1, y0-y1, espLin, 0, 2*Math.PI);
+				graf.closePath(); graf.fill();
+				//desenha as etiquetas
+				graf.fillStyle = corMarca; graf.globalAlpha = 1;
+				graf.font = "bold "+corpo+"px "+fonte;
+				graf.textAlign = "center"; graf.textBaseline = "middle";
+				graf.fillText(etkInf, x1, y0 + 2/3*corpo);
+				graf.fillText(etkSup, x1, y0 - y1 - 3/3*corpo);
+			}
+			
+			//gera um CANVAS com um gráfico linear, dados: 
+				//1. A variável-tabela quantitativa de dupla entrada, cujo primeiro elemento (índice 0) é já o array de nomes das propriedades (resultante da construção da respetiva tabela Web)
+				//2. O número (índice) da coluna da referida variável-tabela a que correspondem os dados
+				//3. As dimensões (largura e altura) do gráfico, em pixels
+				//4. Um objeto de configuração de cada elemento de gráfico linear, {corMarca, corLin, espLin, fonte, corpo}, indicando, para cada elemento, a cor da marca, a cor da linha, a espessura da linha, as fonte e corpo tipográficos. NOTAS: A) o diâmetro da marca é o dobro da espessura da linha; B) a prumada é da cor da marca mas com metade da espessura da linha e opacidade de 0.25; C) a cor das etiquetas é a mesmo da marca
+			function grafLinsColTab(varTabProp, numCol, larg, alt, config){
+				//iteradora, número de pontos, cota máxima, e escala vertical
+				var i, nPts, cotaMax, escVert;
+				//objeto de dados para o gráfico
+				var dadosGraf = dadosColTab(varTabProp, numCol);
+				//gráfico em forma de CANVAS
+				var grafLins = document.createElement("canvas");
+				//contexto gráfico para o CANVAS (para o título do gráfico)
+				var ctxGraf = grafLins.getContext("2d");
+				//configuração básica do CANVAS
+				grafLins.setAttribute("width", larg);
+				grafLins.setAttribute("height", alt);
+				grafLins.setAttribute("style", "border:1px solid #000");
+				//cálculos para número de pontos, cota máxima, e escala vertical
+				nPts = dadosGraf.etiqs.length;
+				cotaMax = alt - 15/3 * config.corpo;
+				escVert = cotaMax/dadosGraf.max;
+				//desenha os elementos de gráfico linear
+				for(i=0; i<nPts-1; i++){
+					desPtLin(
+						grafLins, 
+						alt-10/3*config.corpo, 
+						(i+1/2)*larg/nPts, escVert*dadosGraf.vals[i], 
+						(i+1+1/2)*larg/nPts, escVert*dadosGraf.vals[i+1], 
+						config.corMarca, config.corLin, config.espLin, 
+						dadosGraf.etiqs[i], dadosGraf.vals[i], 
+						config.fonte, config.corpo
+					);
+				}
+				//desenha o último ponto
+				desPtLin(
+					grafLins, 
+					alt-10/3*config.corpo, 
+					(i+1/2)*larg/nPts, escVert*dadosGraf.vals[i], 
+					(i+1/2)*larg/nPts, escVert*dadosGraf.vals[i], 
+					config.corMarca, config.corLin, config.espLin, 
+					dadosGraf.etiqs[i], dadosGraf.vals[i], 
+					config.fonte, config.corpo
+				);
+				//desenha o título do gráfico
+				ctxGraf.font = "bold "+(3/2*config.corpo)+"px "+config.fonte;
+				ctxGraf.fillText(dadosGraf.nome, larg/2, alt-config.corpo);
+				return grafLins;
+			}	
+			
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

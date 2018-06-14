@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>aula.14.01 - Testes de Tabelas</title>
+		<style>
+		</style>
+		<script src="../Recursos/jQuery/jquery-3.3.1.min.js"></script>
+		<script>
+			//lista de cores para sequências circulares
+			var CORES=["#ff3366", "#33ffff", "#338066", "#ffff33", "#3344ff", "#ff8044", "#cccccc"];
+			//vocabulário para os nomes dos meses
+			var NM=["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+			//detalhes mensais de faturação (milhares de euros) de uma pequena empresa de TIC
+			//equips = venda de equipamentos
+			//instals = serviços de instalação e configuração de equipamentos
+			//softs = serviços de desenvolvimento e configuração de software
+			//manuts = serviços de manutenção de aplicações, equipamentos e instalações
+			//formacs = serviços de formação de operadores e utilizadores
+			//NOTA: NÃO É PERMITIDO EDITAR MANUALMENTE ESTA VARIÁVEL
+			var detalhes=[
+				{mes: 1, equips:32, instals:12, softs: 6, manuts: 6,  formacs: 9},
+				{mes: 2, equips:37, instals:14, softs: 7, manuts: 5,  formacs: 8},
+				{mes: 3, equips:40, instals:16, softs: 8, manuts: 5,  formacs: 7},
+				{mes: 4, equips:41, instals:19, softs: 9, manuts: 5,  formacs: 5},
+				{mes: 5, equips:36, instals:20, softs:10, manuts: 6,  formacs: 4},
+				{mes: 6, equips:29, instals:20, softs:11, manuts: 6,  formacs: 2},
+				{mes: 7, equips:24, instals:18, softs:12, manuts: 7,  formacs: 2},
+				{mes: 8, equips:20, instals:15, softs:12, manuts: 7,  formacs: 3},
+				{mes: 9, equips:18, instals:12, softs:11, manuts: 8,  formacs: 5},
+				{mes:10, equips:21, instals:10, softs: 9, manuts: 8,  formacs: 7},
+				{mes:11, equips:24, instals: 9, softs: 8, manuts: 7,  formacs: 8},
+				{mes:12, equips:27, instals:11, softs: 7, manuts: 6,  formacs: 9}
+			];
+
+			//amplitudes e estilos para células de cabeçalho e células de dados (output de tabelas)
+			var amplitCab = {width:60};
+			var amplitDado = {};
+			var estiloCab = {
+				font:"bold 15px arial", textAlign:"right", 
+				verticalAlign:"bottom",
+				backgroundColor:"#840", color:"#fff"
+			};
+			var estiloDado = {
+				font:"15px verdana", textAlign:"right",
+				backgroundColor:"#edc", color:"#000"
+			};
+
+			//aplicação
+			function inicGraficos(){
+				var tabela;
+				descodDetalhes();
+				tabela = geraTabela(
+					detalhes, 2, 
+					{amplit: amplitCab, estilo: estiloCab},
+					{amplit: amplitDado, estilo: estiloDado}
+				);
+				document.body.appendChild(tabela);
+				document.body.appendChild(document.createElement("hr"));
+				detalhes.shift(); //recuperar a variável "detalhes" (sem o array de nomes)
+				//acrescenta os totais de cada mês
+				totMesesDetalhes();
+				console.log(detalhes[0]);
+				tabela = geraTabela(
+					detalhes, 2, 
+					{amplit: amplitCab, estilo: estiloCab},
+					{amplit: amplitDado, estilo: estiloDado}
+				);
+				document.body.appendChild(tabela);
+				document.body.appendChild(document.createElement("hr"));
+				detalhes.shift(); //recuperar a variável "detalhes" (sem o array de nomes)
+				//acrescenta os totais do ano
+				totAnoDetalhes();
+				console.log(detalhes[0]);
+				tabela = geraTabela(
+					detalhes, 2, 
+					{amplit: amplitCab, estilo: estiloCab},
+					{amplit: amplitDado, estilo: estiloDado}
+				);
+				document.body.appendChild(tabela);
+				document.body.appendChild(document.createElement("hr"));
+			}
+
+			//********************** TABELAS WEB ****************************
+			
+			//substitui, na variável "detalhes" as referências numéricas para os meses pelos respetivos nomes por extenso (função ad-hoc)
+			function descodDetalhes(){
+				for(var i=0; i<12; i++) detalhes[i].mes = NM[i];
+			}
+
+			//acrescenta a propriedade "total" a todos os objetos da variável "detalhes" com os totais de cada mês (função ad-hoc)
+			function totMesesDetalhes(){
+				var i, j,tot, nCols = detalhes[0].length;
+				for(i = 0; i < 12; i++){
+					detalhes[i].total = 0;
+					for(prop in detalhes[0]){
+						if(prop != "mes" && prop != "total") detalhes[i].total += detalhes[i][prop]
+					}
+				}	
+
+			} 
+
+			//acrescenta um novo objeto à variável detalhes com os totais de todo o ano em que a propriedade "mês" deverá conter a string "ANO" - (função ad-hoc)
+			function totAnoDetalhes(){
+				var i, prop, totAno = {mes: "ANO", equips: 0, instals:0, softs:0, manuts:0, formacs:0, total:0};
+				detalhes.push(totAno);
+				for(i = 0; i < 12; i++){
+					for(prop in detalhes[12]){
+						if(prop != "mes") detalhes[12][prop] += detalhes[i][prop];
+					}
+				}	
+
+			}
+			
+			//gera uma tabela Web para apresentação dos dados de uma variável-tabela (seja de tipo1, a mais simples, ou seja de tipo2, de dupla entrada), de acordo com dois objetos de formatação das células dos cabeçalhos e das células dos dados, com a forma geral de {amplit, estilo}
+			function geraTabela(varTab, tipo, formCabs, formDados){
+				var iLin, iCol, tabela, nLins, nCols, prop, iCel;
+				var estrut = {lins:[], cab:[], dados:[]};
+				//cria a tabela Web
+				tabela = document.createElement("table");
+				//cria as linhas e coloca-as na tabela
+				nLins = varTab.length + 1;
+				for(iLin=0; iLin<nLins; iLin++){
+					estrut.lins[iLin] = document.createElement("tr");
+					tabela.appendChild(estrut.lins[iLin]);
+				}
+				//cria a lista de nomes das propriedades dos objetos da variável-tabela
+				varTab.unshift([]);
+				for(prop in varTab[1]) varTab[0].push(prop);
+				//cria as células do cabeçalho (com os nomes das propriedades)
+				nCols = varTab[0].length;
+				for(iCol=0; iCol<nCols; iCol++){
+					estrut.cab[iCol] = document.createElement("td");
+					configCel(
+						estrut.cab[iCol], estrut.lins[0], varTab[0][iCol], 
+						formCabs.amplit, formCabs.estilo
+					);
+				}
+				//cria as células de dados da tabela
+				for(iCel=0, iLin=1; iLin<nLins; iLin++){
+					for(iCol=0; iCol<nCols; iCol++, iCel++){
+						estrut.dados[iCel] = document.createElement("td");
+						if(iCol==0 && tipo==2) configCel(
+							estrut.dados[iCel], estrut.lins[iLin], 
+							varTab[iLin][varTab[0][iCol]], 
+							formCabs.amplit, formCabs.estilo
+						);
+						else configCel(
+							estrut.dados[iCel], estrut.lins[iLin], 
+							varTab[iLin][varTab[0][iCol]], 
+							formDados.amplit, formDados.estilo
+						);
+					}
+				}
+				return tabela;
+			}
+			
+			//configura uma célula para uma linha de uma tabela, dados: a célula, a linha-mãe, o conteúdo, o objeto de amplitude e o objeto de estilo (de Aula.07.02)
+			function configCel(cel, lin, cont, amplit, estilo){
+				var prop;
+				lin.appendChild(cel);
+				cel.appendChild(document.createTextNode(cont));
+				for(prop in amplit) cel.setAttribute(prop, amplit[prop]);
+				for(prop in estilo) $(cel).css(prop, estilo[prop]);
+			}
+			
+		</script>
+	</head>
+	<body>
+		<script>
+			inicGraficos();
+		</script>
+	</body>
+</html>

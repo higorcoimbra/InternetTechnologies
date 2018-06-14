@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!--
+Geração de gráficos de barras a partir dos dados de colunas de variáveis-tabela, artificialmente acrescentadas, à cabeça, dos arrays de nomes das propriedades. 
+-->
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.12.01 - Gráficos de Barras</title>
+		<style>
+			canvas{margin-right:10px; background-color:#ddd;}
+		</style>
+		<script>
+			//variáveis-tabela, acrescentadas artificialmente dos arrays de nomes das propriedades
+			var dados1=[
+				["pais", "qtd"],
+				{pais:"PT", qtd:120},
+				{pais:"ES", qtd:135},
+				{pais:"FR", qtd:70},
+				{pais:"IT", qtd:125},
+				{pais:"GB", qtd:30},
+				{pais:"DE", qtd:40},
+				{pais:"NL", qtd:10}
+			];
+			//detalhes de receitas de um determinado ano (milhares de euros)
+			var detalhes=[
+				["mes", "laranja", "banana", "kiwi"],
+				{mes:1, laranja:150, banana:50, kiwi:37}, 
+				{mes:2, laranja:120, banana:40, kiwi:59}, 
+				{mes:3, laranja:100, banana:60, kiwi:49}, 
+				{mes:4, laranja:100, banana:60, kiwi:42}, 
+				{mes:5, laranja:115, banana:50, kiwi:50}, 
+				{mes:6, laranja:130, banana:80, kiwi:31}, 
+				{mes:7, laranja:150, banana:110, kiwi:45}, 
+				{mes:8, laranja:150, banana:140, kiwi:55}, 
+				{mes:9, laranja:150, banana:140, kiwi:60}, 
+				{mes:10, laranja:150, banana:130, kiwi:60}, 
+				{mes:11, laranja:120, banana:100, kiwi:103}, 
+				{mes:12, laranja:100, banana:100, kiwi:61}
+			];
+			//inicialização
+			function inic(){
+				var graf1;
+				//gráfico de barras para a única coluna da variável "dados1"
+				graf1 = grafBarsColTab(
+					dados1, 1, 200, 200, 
+					{corLin:"#800", corFnd:"#8ff", fonte:"arial", corpo:12}
+				);
+				document.body.appendChild(graf1);
+				//gráfico de barras para a primeira coluna da variável "detalhes"
+				graf1 = grafBarsColTab(
+					detalhes, 1, 300, 200, 
+					{corLin:"#800", corFnd:"#8ff", fonte:"arial", corpo:12}
+				);
+				document.body.appendChild(graf1);
+				//gráfico de barras para a segunda coluna da variável "detalhes"
+				graf1 = grafBarsColTab(
+					detalhes, 2, 300, 200, 
+					{corLin:"#800", corFnd:"#8ff", fonte:"arial", corpo:12}
+				);
+				document.body.appendChild(graf1);
+				//gráfico de barras para a terceira coluna da variável "detalhes"
+				graf1 = grafBarsColTab(
+					detalhes, 3, 300, 200, 
+					{corLin:"#800", corFnd:"#8ff", fonte:"arial", corpo:12}
+				);
+				document.body.appendChild(graf1);
+			}
+			//gera um objeto de dados, na forma {nome, etiqs, vals, max}, de uma coluna (referida pelo seu índice) de uma variável-tabela quantitativa, com caráter de dupla entrada, com o nome da relação, a lista das etiquetas, a lista de valores e o valor máximo (assumindo que o primeiro elemento da variável-tabela já é o array de nomes das propriedades)
+			function dadosColTab(varTab, numCol){
+				var dct = {};
+				var i, nLins=varTab.length - 1;
+				dct.nome = varTab[0][numCol] + "/" + varTab[0][0];
+				dct.etiqs = []; dct.vals = []; dct.max = -Number.MAX_VALUE;
+				for(i=1; i<=nLins; i++){
+					dct.etiqs[i-1] = varTab[i][varTab[0][0]];
+					dct.vals[i-1] = varTab[i][varTab[0][numCol]];
+					if(dct.vals[i-1] > dct.max) dct.max = dct.vals[i-1];
+				}
+				return dct;
+			}
+			//desenha num CANVAS uma barra bi-etiquetada, dados: coordenadas (x, y) do centro da base da barra, largura, altura, cor do contorno e cor do fundo da barra, etiquetas inferior e superior, fonte e corpo tipográficos. NOTAS: 1. A cor das etiquetas é a mesma do contorno; 2. A espessura do contorno é 1/20 da largura da barra
+			function desBarra(canvas, x, y, larg, alt, corLin, corFnd, etkInf, etkSup, fonte, corpo){
+				var graf = canvas.getContext("2d");
+				//desenha a barra
+				graf.fillStyle = corFnd;
+				graf.strokeStyle = corLin; graf.lineWidth = larg/20;
+				graf.fillRect(x-larg/2, y-alt, larg, alt);
+				graf.strokeRect(x-larg/2, y-alt, larg, alt);
+				//desenha as etiquetas
+				graf.fillStyle = corLin;
+				graf.font = "bold "+corpo+"px "+fonte;
+				graf.textAlign = "center"; graf.textBaseline = "middle";
+				graf.fillText(etkInf, x, y + 2/3*corpo);
+				graf.fillText(etkSup, x, y - alt - 2/3*corpo);
+			}
+			
+			//gera um CANVAS com um gráfico de barras, dados: 
+				//1. A variável-tabela quantitativa de dupla entrada, cujo primeiro elemento (índice 0) é já o array de nomes das propriedades (resultante da construção da respetiva tabela Web)
+				//2. O número (índice) da coluna da referida variável-tabela a que correspondem os dados
+				//3. As dimensões (largura e altura) do gráfico, em pixels
+				//4. Um objeto de configuração de cada barra, {corLin, corFnd, fonte, corpo}, indicando, para cada barra, a cor do contorno, a cor do fundo, a fonte e corpo (em pixels) tipográficos. NOTAS: A) A cor das etiquetas é a mesma do contorno; B) A espessura do contorno é 1/20 da largura da barra
+			function grafBarsColTab(varTabProp, numCol, larg, alt, config){
+				//iteradora, número de barras, largura de cada barra, altura máxima das barras, escala para as barras
+				var i, nBars, lrgBar, altMaxBar, escBar;
+				//objeto de dados para o gráfico
+				var dadosGraf = dadosColTab(varTabProp, numCol);
+				//gráfico em forma de CANVAS
+				var grafBars = document.createElement("canvas");
+				//contexto gráfico para o CANVAS (para o título do gráfico)
+				var ctxGraf = grafBars.getContext("2d");
+				//configuração básica do CANVAS
+				grafBars.setAttribute("width", larg);
+				grafBars.setAttribute("height", alt);
+				grafBars.setAttribute("style", "border:1px solid #000");
+				//cálculos para o número de barras, a largura de cada barra, a altura máxima das barras e a escala para as barras
+				nBars = dadosGraf.etiqs.length;
+				lrgBar = 3/4 * larg/nBars;
+				altMaxBar = alt - 14/3 * config.corpo;
+				escBar = altMaxBar/dadosGraf.max;
+				//desenha as barras bietiquetadas
+				for(i=0; i<nBars; i++){
+					desBarra(
+						grafBars, 
+						(i+1/2)*larg/nBars, alt-10/3*config.corpo, 
+						lrgBar, escBar*dadosGraf.vals[i], 
+						config.corLin, config.corFnd, 
+						dadosGraf.etiqs[i], dadosGraf.vals[i], 
+						config.fonte, config.corpo
+					);
+				}
+				//desenha o título do gráfico
+				ctxGraf.font = "bold "+(3/2*config.corpo)+"px "+config.fonte;
+				ctxGraf.fillText(dadosGraf.nome, larg/2, alt-config.corpo);
+				return grafBars;
+			}	
+			
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>

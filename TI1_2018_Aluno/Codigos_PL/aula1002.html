@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>Aula.10.02 - Variáveis de Tabela #2</title>
+		<style>
+		</style>
+		<script src="../Recursos/jQuery/jquery-3.3.1.min.js"></script>
+		<script>
+			var amplitCab = {
+
+			};
+			var estiloCab = {
+				font:"bold 14px arial", textAlign:"center",
+				backgroundColor: "#800", color: "#fff" 
+			};
+			var amplitCel = {
+
+			};
+			var estiloCel = {
+				font:"bold 14px verdana", textAlign:"center",
+				backgroundColor: "#fca", color: "#800" 
+			};
+			var dados1=[
+				{pais:"PT", qtd:120},
+				{pais:"ES", qtd:135},
+				{pais:"FR", qtd:70},
+				{pais:"IT", qtd:125},
+				{pais:"GB", qtd:30},
+				{pais:"DE", qtd:40},
+				{pais:"NL", qtd:10}
+			];
+			//detalhes de receitas de um determinado ano (milhares de euros)
+			var detalhes=[
+				{mes:1, laranja:150, banana:50, kiwi:37}, 
+				{mes:2, laranja:120, banana:40, kiwi:59}, 
+				{mes:3, laranja:100, banana:60, kiwi:49}, 
+				{mes:4, laranja:100, banana:60, kiwi:42}, 
+				{mes:5, laranja:115, banana:50, kiwi:50}, 
+				{mes:6, laranja:130, banana:80, kiwi:31}, 
+				{mes:7, laranja:150, banana:110, kiwi:45}, 
+				{mes:8, laranja:150, banana:140, kiwi:55}, 
+				{mes:9, laranja:150, banana:140, kiwi:60}, 
+				{mes:10, laranja:150, banana:130, kiwi:60}, 
+				{mes:11, laranja:120, banana:100, kiwi:103}, 
+				{mes:12, laranja:100, banana:100, kiwi:61}
+			];
+			function inic(){
+				var tabela2;
+				//tabela web para a variável "dados1"
+				tabela1 = geraTabela2(dados1, {amplit: amplitCab, estilo: estiloCab}, {amplit: amplitCel, estilo: estiloCel});
+				document.body.appendChild(tabela1);
+				document.body.appendChild(document.createElement("hr"));
+				//tabela web para a variável "detalhes"
+				tabela2 = geraTabela2(detalhes, {amplit: amplitCab, estilo: estiloCab}, {amplit: amplitCel, estilo: estiloCel});
+				document.body.appendChild(tabela2);
+			}
+			//gera uma tabela para apresentação dos dados de uma variável-tabela (tipo2, de dupla entrada), de acordo com dois objetos de formatação das células dos cabeçalhos e das células dos dados, com a forma geral de {amplit, estilo}
+			function geraTabela2(varTab, formCabs, formDados){
+				var i, j,tabela, prop, nLins, nCols, iCel;
+				var estrut = {lins:[], cabs:[], dados:[]};
+				//cria a tabela
+				tabela = document.createElement("table");
+				//cria as linhas e coloca-as na tabela
+				nLins = varTab.length+1;
+				for(i = 0; i < nLins; i++){
+					estrut.lins[i] = document.createElement('tr');
+					tabela.appendChild(estrut.lins[i]);		
+				}
+				//cria a lista de nomes das propriedades da variável-tabela
+				varTab.unshift([]);
+				for(prop in varTab[1]){
+					varTab[0].push(prop);	
+				} 
+				nCols = varTab[0].length;
+				//cria as células do cabeçalho (com os nomes das propriedades)
+				for(j = 0; j < nCols; j++){
+					estrut.cabs[j] = document.createElement('td');
+					configCel(
+						estrut.cabs[j], estrut.lins[0],
+						varTab[0][j], formCabs.amplit, formCabs.estilo
+					);
+				}
+				//cria as células dos dados (com os conteúdos da variável-tabela)
+				for(iCel = 0, i = 1; i < nLins; i++){
+					for(j = 0; j < nCols; j++, iCel++){
+						estrut.dados[iCel] = document.createElement('td');
+						if(j == 0)
+							configCel(
+								estrut.dados[iCel], estrut.lins[i],
+								varTab[i][varTab[0][j]], formCabs.amplit, formCabs.estilo
+							);
+						else
+							configCel(
+								estrut.dados[iCel], estrut.lins[i],
+								varTab[i][varTab[0][j]], formDados.amplit, formDados.estilo
+							);
+					}
+				}
+				return tabela;
+			}
+
+			//configura uma célula para uma linha de uma tabela, dados: a célula, a linha-mãe, o conteúdo, o objeto de amplitude e o objeto de estilo (de Aula 07.02)
+			function configCel(cel, lin, cont, amplit, estilo){
+				var prop;
+				lin.appendChild(cel);
+				cel.appendChild(document.createTextNode(cont));
+				for(prop in amplit) cel.setAttribute(prop, amplit[prop]);
+				for(prop in estilo) $(cel).css(prop, estilo[prop]);
+			}
+		</script>
+	</head>
+	<body>
+		<script>
+			inic();
+		</script>
+	</body>
+</html>
