@@ -5,15 +5,18 @@
 		<title>Expressionismo Abstrato - Aluno 99999</title>
 		<style>
 			body{background-color: #066;}
-			#apres0{position: absolute; left:20px; top:25px; width: 60%;}
+			#introdTela{position: absolute; left:20px; top:25px; width: 60%;}
+			#infoPintor{position: absolute; left:20px; top:25px; width: 100%;}
 			.imgArt{
 				width: 90%;
 				border: 1px solid white;
 			}
 			#introdBox{background-color: #ddd; vertical-align: top; padding: 15px 15px 0px 15px;}
-			#tituloIntrod, #subtituloIntrod{font-family: verdana;}
-			.paragIntrod{font: 16px/1.5 verdana; text-align: justify;}
-			#miniDescBox{width:27%;}
+			#infoBox{background-color: #ddd; vertical-align: top; padding: 15px 15px 0px 15px;}
+			.tituloFormat{font-family: verdana;}
+			.paragFormat{font: 16px/1.5 verdana; text-align: justify;}
+			#miniDescBox0{width:27%;}
+			#miniDescBox1{width:216px; vertical-align: top;}
 			.miniDesc{color:#fff; font: 14px verdana; width: 90%;}
 		</style>
 		<script src="../ExprAbstr/ExprAbstrBD.js"></script>
@@ -30,16 +33,25 @@
 
 			//adquire as referências para o interface estático
 			function adqInterf() {
-				interf.miniDescBox = document.getElementById("miniDescBox");
+				//tela de introdução
+				interf.introdTela = document.getElementById("introdTela");
+				interf.miniDescBox0 = document.getElementById("miniDescBox0");
 				interf.introdBox = document.getElementById("introdBox");
+				//tela de informação do pintor
+				interf.infoPintor = document.getElementById("infoPintor");
+				interf.infoBox = document.getElementById("infoBox");
+				interf.miniDescBox1 = document.getElementById("miniDescBox1");
+				interf.miniDescObras = document.getElementById("miniDescObras");
 			}
 
 			//inicializa o interface no seu estado inicial
 			function inicInterf(){
 				var i, miniDesc, introd;
+				//escondendo a tabela de informação dos artistas
+				interf.infoPintor.style.visibility = "hidden";
 				//preenchimento da primeira coluna com foto e mini descrição dos artistas
 				for(i = 0; i < nPintores(); i++){
-					miniDesc = "<img class=\"imgArt\"" + "id=\"" + "art" + i + "\" " + "src=\"" + PATH + pintor(i).foto + "\"></img>";
+					miniDesc = "<img onclick=\"mostraPintor(" + i + ")\""  + "class=\"imgArt\"" + "id=\"" + "art" + i + "\" " + "src=\"" + PATH + pintor(i).foto + "\"></img>";
 					miniDesc += "<br>";
 					miniDesc += "<p class=\"miniDesc\">" + "<b>" + pintor(i).nome + "</b>";
 					miniDesc += ", pintor de nacionalidade " + pintor(i).nacion;
@@ -47,16 +59,43 @@
 					miniDesc += " em " + pintor(i).localNasc;
 					miniDesc += ", e falecido a " + data(i, "morte");
 					miniDesc += " em " + pintor(i).localMorte + ".<p>";
-					interf.miniDescBox.innerHTML += miniDesc;
+					interf.miniDescBox0.innerHTML += miniDesc;
 				}
 				//preenchimento da segunda coluna com a introdução sobre o Expressionismo Abstrato
-				introd = "<h2 id=\"tituloIntrod\">" + titulo() + "</h2><br>";
-				introd += "<h3 id=\"subtituloIntrod\">" + subtitulo() + "</h3><br>";
+				introd = "<h2 class=\"tituloFormat\">" + titulo() + "</h2><br>";
+				introd += "<h3 class=\"tituloFormat\">" + subtitulo() + "</h3><br>";
 				for(i = 0; i < nParagIntrod(); i++){
-					introd += "<p class=\"paragIntrod\">" + paragIntrod(i) + "</p>";
+					introd += "<p class=\"paragFormat\">" + paragIntrod(i) + "</p>";
 				}
-				introd += "<br>" + "<p class=\"paragIntrod\">"+ "<i>(clique nas fotos para informação sobre os pintores)</i>"+ "</p>"
+				introd += "<br>" + "<p class=\"paragFormat\">"+ "<i>(clique nas fotos para informação sobre os pintores)</i>"+ "</p>"
 				interf.introdBox.innerHTML = introd;
+			}
+
+			//mostra a componente de informação do pintor baseado na escolha do usuário na tela de introdução
+			function mostraPintor(nPintor){
+				var i, miniDesc, textPintor;
+				interf.introdTela.style.visibility = "hidden";
+				interf.infoPintor.style.visibility = "visible";
+				//preenchimento da primeira coluna com foto e mini descrição do artista escolhido na tela de introdução
+				miniDesc = "<img class=\"imgArt\" " + "src=\"" + PATH + pintor(nPintor).foto + "\"></img>";
+				miniDesc += "<br>";
+				miniDesc += "<p class=\"miniDesc\">" + "<b>" + pintor(nPintor).nome + "</b>";
+				miniDesc += ", pintor de nacionalidade " + pintor(nPintor).nacion;
+				miniDesc += ", nascido em " + data(nPintor, "nascimento");
+				miniDesc += " em " + pintor(nPintor).localNasc;
+				miniDesc += ", e falecido a " + data(nPintor, "morte");
+				miniDesc += " em " + pintor(nPintor).localMorte + ".<p>";
+				interf.miniDescBox1.innerHTML = miniDesc;
+				//preenchimento da segunda coluna com as informações completas sobre o artista escolhido
+				textPintor = "";
+				textPintor += "<h2 class=\"tituloFormat\">" + pintor(nPintor).nome + "</h2><br>";
+				for(i = 0; i < nParagPintorDesc(nPintor); i++){
+					textPintor += "<p class=\"paragFormat\">" + paragPintorDesc(nPintor, i) + "</p>";
+				}
+				textPintor += "<br>" + "<p class=\"paragFormat\">"+ "<i>(clique nos quadros para ampliar)</i>"+ "</p>"
+				interf.infoBox.innerHTML = textPintor;
+				//prenchimento da terceira coluna com as imagens e mini descrição das obras do artista escolhido
+
 			}
 
 		</script>
@@ -76,13 +115,24 @@
 		<!-- 180px as imagens do pintor, 280px as imagens do quadro, na tela que tem o artista selecionado -->
 		<!-- tamanho da tabela em 100% -->
 		<!-- existem algumas strings com estilo diferente no texto, fazer o parsing da string já com o estilo -->
-		<table id="apres0">
+		<table id="infoPintor">
 			<tr>
-				<td id="miniDescBox"></td>
+				<td></td>
+				<td>teste</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td id="miniDescBox1"></td>
+				<td id="infoBox"></td>
+				<td id="miniDescObras"></td>
+			</tr>
+		</table>
+		<table id="introdTela">
+			<tr>
+				<td id="miniDescBox0"></td>
 				<td id="introdBox"></td>
 			</tr>
 		</table>	
-	
 
 		<script>
 			inic();
