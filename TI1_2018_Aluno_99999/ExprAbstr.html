@@ -5,25 +5,37 @@
 		<title>Expressionismo Abstrato - Aluno 99999</title>
 		<style>
 			body{background-color: #066;}
-			#introdTela{position: absolute; left:20px; top:25px; width: 60%;}
-			#infoPintor{position: absolute; left:20px; top:25px; width: 100%;}
+			#miniDescBox0{width:25%;}
+			#miniDescBox1{width:14.5%; vertical-align: top;}
+			#miniDescObras{width: 20%; padding-left: 10px;}
+			#infoBox{width: 60%; background-color: #ddd; vertical-align: top; padding: 15px 15px 0px 15px;}
+			#infoPintor{position: absolute; left:8px; top:25px; width: 100%;}
+			#introdBox{background-color: #ddd; vertical-align: top; padding: 15px 15px 0px 15px;}
+			#introdTela{position: absolute; left:8px; top:25px; width: 60%;}
+			#zoom{background-color: #ddd; width: 700px; position: absolute; left: 8px; top: 25px; padding: 15px 15px 30px; border: 1px solid #000;}
+			#zoomImag{position: relative; width: 700px;}
+			#zoomParag{padding-top: 15px; font: 14px verdana; text-align: justify;}
 			.imgArt{
 				width: 90%;
 				border: 1px solid white;
 			}
-			#introdBox{background-color: #ddd; vertical-align: top; padding: 15px 15px 0px 15px;}
-			#infoBox{background-color: #ddd; vertical-align: top; padding: 15px 15px 0px 15px;}
-			.tituloFormat{font-family: verdana;}
-			.paragFormat{font: 16px/1.5 verdana; text-align: justify;}
-			#miniDescBox0{width:27%;}
-			#miniDescBox1{width:216px; vertical-align: top;}
+			.imgObra{
+				width: 280px;
+				border: 1px solid white;
+			}
 			.miniDesc{color:#fff; font: 14px verdana; width: 90%;}
+			.paragFormat{font: 16px/1.5 verdana; text-align: justify;}
+			.paragObraFormat{padding-right:6px; font: 12px verdana; text-align: left; color: white;}
+			.tituloFormat{font-family: verdana;}
+			.tituloObraFormat{font: bold 14px verdana ; color: white;}
+
 		</style>
 		<script src="../ExprAbstr/ExprAbstrBD.js"></script>
 		<script src="ExprAbstrPars.js"></script>
 		<script>
 			var PATH = "../ExprAbstr/";
 			var interf = {}
+			var pintorAtual = 0;
 			
 			//inicialização
 			function inic(){
@@ -42,6 +54,11 @@
 				interf.infoBox = document.getElementById("infoBox");
 				interf.miniDescBox1 = document.getElementById("miniDescBox1");
 				interf.miniDescObras = document.getElementById("miniDescObras");
+				interf.listaPintores = document.getElementById("listaPintores");
+				//tela de detalhes de uma obra
+				interf.zoomImag = document.getElementById("zoomImag");
+				interf.zoomParag = document.getElementById("zoomParag");
+				interf.zoom = document.getElementById("zoom");
 			}
 
 			//inicializa o interface no seu estado inicial
@@ -49,6 +66,7 @@
 				var i, miniDesc, introd;
 				//escondendo a tabela de informação dos artistas
 				interf.infoPintor.style.visibility = "hidden";
+				interf.zoom.style.visibility = "hidden";
 				//preenchimento da primeira coluna com foto e mini descrição dos artistas
 				for(i = 0; i < nPintores(); i++){
 					miniDesc = "<img onclick=\"mostraPintor(" + i + ")\""  + "class=\"imgArt\"" + "id=\"" + "art" + i + "\" " + "src=\"" + PATH + pintor(i).foto + "\"></img>";
@@ -69,6 +87,7 @@
 				}
 				introd += "<br>" + "<p class=\"paragFormat\">"+ "<i>(clique nas fotos para informação sobre os pintores)</i>"+ "</p>"
 				interf.introdBox.innerHTML = introd;
+				carregaListas();
 			}
 
 			//mostra a componente de informação do pintor baseado na escolha do usuário na tela de introdução
@@ -76,6 +95,7 @@
 				var i, miniDesc, textPintor;
 				interf.introdTela.style.visibility = "hidden";
 				interf.infoPintor.style.visibility = "visible";
+				interf.listaPintores.selectedIndex = nPintor;
 				//preenchimento da primeira coluna com foto e mini descrição do artista escolhido na tela de introdução
 				miniDesc = "<img class=\"imgArt\" " + "src=\"" + PATH + pintor(nPintor).foto + "\"></img>";
 				miniDesc += "<br>";
@@ -95,9 +115,58 @@
 				textPintor += "<br>" + "<p class=\"paragFormat\">"+ "<i>(clique nos quadros para ampliar)</i>"+ "</p>"
 				interf.infoBox.innerHTML = textPintor;
 				//prenchimento da terceira coluna com as imagens e mini descrição das obras do artista escolhido
-
+				miniDesc = "";
+				for(i = 0; i < nObras(nPintor); i++){
+					miniDesc += "<h3 class=\"tituloObraFormat\">" + tituloObra(nPintor, i) + ", " + anoObra(nPintor, i) + "</h3>";
+					miniDesc += "<img onclick=\"zoom(this," + nPintor + "," + i + ")" + "\" class=\"imgObra\" src=\"" + PATH + fichImagObra(nPintor, i) + "\"></img>"
+					miniDesc += "<p class=\"paragObraFormat\">" + descObra(nPintor, i) + "</p><br>"; 
+				}
+				interf.miniDescObras.innerHTML = miniDesc;
 			}
 
+			//carrega as listas de opções da apresentação
+			function carregaListas(){
+				var i, nP = nPintores(), listaOp = "";
+				for(i = 0; i < nP; i++){
+					listaOp += "<option>" + pintor(i).nome + "</option>";
+				}
+				listaPintores.innerHTML = listaOp;
+			}
+
+			//amplia a imagem indicada
+			function zoom(fig, iPintor, iObra){
+				interf.infoPintor.style.visibility = "hidden";
+				interf.zoom.style.visibility = "visible";
+				interf.zoomImag.src = fig.src;
+				interf.zoomParag.innerHTML = descObra(iPintor, iObra);
+				interf.zoomParag.innerHTML += "<br><br><i>(clique na imagem para voltar ao pintor)</i>"
+			}
+			//esconde a imagem zoom
+			function esconde(){
+				interf.zoom.style.visibility = "hidden";
+				interf.infoPintor.style.visibility = "visible";
+			}
+
+			//esconde a tela com descrição dos artistas
+			function escondeTelaPintores(){
+				interf.infoPintor.style.visibility = "hidden";
+				interf.introdTela.style.visibility = "visible";
+			}
+
+			//move a "cabeça de leitura" na base de dados, o número de passos indicados
+			function move(np){
+				var nMax = nPintores();
+				pintorAtual += np;
+				console.log("pintor Atual " + pintorAtual);
+				if(pintorAtual < 0) pintorAtual = nMax-1; if(pintorAtual > nMax-1) pintorAtual = 0;
+				mostraPintor(pintorAtual);
+			}
+
+			//escolhe um artista na lista de pintores da tela de informação
+			function escolhePintor(){
+				pintorAtual = interf.listaPintores.selectedIndex;
+				mostraPintor(pintorAtual);
+			}
 		</script>
 	</head>
 	<body>
@@ -115,10 +184,19 @@
 		<!-- 180px as imagens do pintor, 280px as imagens do quadro, na tela que tem o artista selecionado -->
 		<!-- tamanho da tabela em 100% -->
 		<!-- existem algumas strings com estilo diferente no texto, fazer o parsing da string já com o estilo -->
+		<div id="zoom" onclick="esconde()">
+			<img id="zoomImag"/>
+			<p id="zoomParag"></p>
+		</div>
 		<table id="infoPintor">
 			<tr>
 				<td></td>
-				<td>teste</td>
+				<td>
+					<button onclick="escondeTelaPintores()">&#9650</button>
+					<button onclick="move(-1)">&#9668</button>
+					<select id="listaPintores" onchange="escolhePintor()"></select>
+					<button onclick="move(1)">&#9658</button>
+				</td>
 				<td></td>
 			</tr>
 			<tr>
