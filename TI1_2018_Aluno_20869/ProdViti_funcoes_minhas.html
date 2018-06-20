@@ -1,0 +1,60 @@
+<script type="text/javascript">
+
+	//cria uma coluna a mais na variável tabela para contabilizar a produção total (em toneladas) por ano de cada tipo de uva. Recebe como parâmetro a variável tabela a ser modificada. 
+	function geraTotalPorAno(varTab){
+		//iteradores, total por ano, número de colunas com dados da variável tabela
+		var i, j, tot, nLinhas = varTab.length, nCols = varTab[0].length;
+		//objeto genérico
+		var obj = {};
+		for(i = 1;i < nLinhas; i++){
+			tot = 0;
+			for(j = 1; j < nCols; j++){
+				//acumula o valor da produção de cada casta por ano
+				tot += varTab[i][varTab[0][j]];
+			}
+			//cria uma propriedade para o total da produção no objeto correspondente ao ano
+			varTab[i].total = tot;
+		}
+	}
+
+
+
+	//cria um objeto (linha) a mais na variável tabela para contabilizar a produção total (em toneladas) por década de cada tipo de uva. Recebe como parâmetro a variável tabela a ser modificada. 
+	//NOTAS:
+	//1. A função Object.assign(targetObj, sourceObj) clona o objeto "sourceObj" passado por parâmetro já instanciado e atribui a um objeto alvo ("targetObj"), retornando o objeto alvo.
+	//2. A função Object.keys(obj) retorna um array com as propriedades do objeto "obj"  
+	//3. A função [...].forEach(function(key){} processa cada propriedade do array obtido por Object.keys(obj) com a função passada por parâmetro.
+	function geraTotalPorDecada(varTab){
+		//iteradores, número de linhas e de colunas com dados da variável tabela
+		var i, j, nLinhas = varTab.length, nCols;
+		//array auxiliar e que armazena as somas dos valores por década
+		var aux = [], dec = [];
+		//objeto a ser inserido na tabela como uma nova linha
+		var obj = {};
+
+		for(i = 1; i < nLinhas; i++){
+			if(i == 1){
+				//armazena o número de toneladas produzidas de cada uva no primeiro ano (2001) em um array
+				dec = dadosLinTab(varTab, i).vals;
+				nCols = dec.length;
+			}else{
+				//acumula os valores para os anos seguintes do número de toneladas produzidas de cada uva gerando o total por década de cada casta de uva em uma posição do array "dec"
+				aux = dadosLinTab(varTab, i).vals;
+				for(j = 0; j < nCols;j++){
+					dec[j] += aux[j];
+				} 
+			}
+		}
+		//cria objeto para a soma por década de cada casta de uva
+		dec.unshift("década");
+		i = 0;
+		obj = Object.assign({}, varTab[1]);
+		Object.keys(obj).forEach(function(key){ 
+			obj[key] = dec[i];
+			i++;
+		});
+
+		//insere nova linha na tabela
+		varTab.push(obj);
+	}
+</script>
